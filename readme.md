@@ -18,7 +18,9 @@ Step-by-step instructions on how to get a development environment running.
 ```bash
 # Clone the repository
 git clone https://github.com/FranciscoArques/to-do-app-be.git
+```
 
+```bash
 # Navigate to the project directory
 cd to-do-app-be
 
