@@ -1,9 +1,18 @@
-import express from 'express';
+import { Router } from 'express';
+import { HealthCheckRoutes } from './routes/health-checks.routes';
 
-const router = express.Router();
+const healthCheckRoutes = new HealthCheckRoutes();
 
-router.get('/ping', (req, res) => {
-  res.send({ message: 'pong' });
-});
+export class MainRoutes {
+  public router: Router;
 
-export default router;
+  constructor() {
+    this.router = Router(),
+    this.init()
+  }
+
+  private init(): void {
+    this.router.use('/healtchecks', healthCheckRoutes.router)
+  }
+};
+
