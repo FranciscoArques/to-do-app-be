@@ -15,4 +15,3 @@ export class MainRoutes {
     this.router.use('/healtchecks', healthCheckRoutes.router)
   }
 };
-

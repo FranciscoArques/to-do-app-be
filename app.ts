@@ -1,20 +1,11 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+dotenv.config();
+
 import { MainRoutes } from './src/index';
 import { errorHandler } from './src/middleware/errorHandler';
 import { HttpError } from './src/errors/HttpError';
-import admin from 'firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore';
-
-const serviceAccount = require('./src/db/firebase.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-});
-
-export const db = getFirestore();
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

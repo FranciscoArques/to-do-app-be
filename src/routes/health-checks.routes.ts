@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { db } from '../../app';
+import { db } from '../db/firebaseService';
 
 export class HealthCheckRoutes {
   public router: Router;
