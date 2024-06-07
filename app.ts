@@ -5,6 +5,7 @@ dotenv.config();
 
 import { MainRoutes } from './src/index';
 import { errorHandler } from './src/middleware/errorHandler';
+import { logger } from './src/middleware/logger';
 import { HttpError } from './src/errors/HttpError';
 
 const app = express();
@@ -12,6 +13,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(logger());
 
 const mainRoutes = new MainRoutes();
 app.use('/api', mainRoutes.router);
@@ -25,5 +28,5 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}\n`);
 });

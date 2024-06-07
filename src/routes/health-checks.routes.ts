@@ -1,5 +1,6 @@
-import { Router, Request, Response } from 'express';
-import { db } from '../db/firebaseService';
+import { Router, Request, Response, NextFunction } from 'express';
+import { HttpError } from '../errors/HttpError';
+import { pingService, pingDbService } from '../services/health-checks.service';
 
 export class HealthCheckRoutes {
   public router: Router;
@@ -16,21 +17,22 @@ export class HealthCheckRoutes {
 }
 
 const pingController = async (req: Request, res: Response): Promise<void> => {
-  res.send({ message: 'pong' });
+  const result = await pingService();
+  res.status(200).send(result)
 };
 
-const pingDbController = async (req: Request, res: Response): Promise<any> => {
+const pingDbController = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
-    const docRef = db.collection('test').doc('RH7TimcfFiBnq1IqgRZj');
-    const doc = await docRef.get();
-
+    const doc = await pingDbService();
     if (!doc.exists) {
-      return res.status(404).send('Document not found');
+      return next(
+        new HttpError(404, 'Document Not Found.')
+      )
     }
-
     res.status(200).send(doc.data());
   } catch (error) {
-    console.error('Error fetching document:', error);
-    res.status(500).send('Internal Server Error');
+    return next(
+      new HttpError(500, 'Internal Server Error.')
+    )
   }
 };
