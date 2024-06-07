@@ -7,12 +7,12 @@ export class FirebaseService {
   private dbInstance: Firestore;
 
   constructor() {
-    console.log("Initializing Firebase Admin SDK");
+    console.log('Initializing Firebase Admin SDK');
     this.adminInstance = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
     });
     this.dbInstance = getFirestore(this.adminInstance);
-    console.log("Firebase Admin SDK initialized");
+    console.log('Firebase Admin SDK initialized');
   }
 
   public getAdmin(): admin.app.App {

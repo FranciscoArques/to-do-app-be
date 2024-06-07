@@ -8,10 +8,10 @@ export class MainRoutes {
 
   constructor() {
     this.router = Router(),
-    this.init()
+    this.init();
   }
 
   private init(): void {
-    this.router.use('/healtchecks', healthCheckRoutes.router)
+    this.router.use('/healtchecks', healthCheckRoutes.router);
   }
-};
+}

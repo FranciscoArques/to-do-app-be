@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response } from 'express';
 import { db } from '../db/firebaseService';
 
 export class HealthCheckRoutes {
@@ -6,20 +6,20 @@ export class HealthCheckRoutes {
 
   constructor() {
     this.router = Router(),
-    this.init()
+    this.init();
   }
 
   private init(): void {
     this.router.get('/ping', pingController),
-    this.router.get('/ping-db', pingDbController)
+    this.router.get('/ping-db', pingDbController);
   }
-};
+}
 
-const pingController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const pingController = async (req: Request, res: Response): Promise<void> => {
   res.send({ message: 'pong' });
 };
 
-const pingDbController = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+const pingDbController = async (req: Request, res: Response): Promise<any> => {
   try {
     const docRef = db.collection('test').doc('RH7TimcfFiBnq1IqgRZj');
     const doc = await docRef.get();

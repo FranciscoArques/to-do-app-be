@@ -7,12 +7,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "rootDir": ".",
-    "outDir": "./dist"
+    "rootDir": "../",
+    "outDir": "../dist"
   },
   "include": [
-    "app.ts",
-    "src/**/*.ts"
+    "../app.ts",
+    "../src/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["../node_modules"]
 }
+
