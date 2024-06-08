@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { MainRoutes } from './src/index';
-import { errorHandler } from './src/middleware/errorHandler';
-import { logger } from './src/middleware/logger';
+import { errorHandler } from './src/middlewares/errorHandler';
+import { logger } from './src/middlewares/logger';
 import { HttpError } from './src/errors/httpError';
 
 const app = express();

@@ -1,0 +1,51 @@
+{
+	"info": {
+		"_postman_id": "07fed5ae-2718-4cf9-9d11-c206574342fb",
+		"name": "to-do-app-be",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31003554"
+	},
+	"item": [
+		{
+			"name": "health-checks",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ping-db",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping-db",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping-db"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
