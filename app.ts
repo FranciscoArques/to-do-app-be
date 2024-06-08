@@ -6,7 +6,7 @@ dotenv.config();
 import { MainRoutes } from './src/index';
 import { errorHandler } from './src/middleware/errorHandler';
 import { logger } from './src/middleware/logger';
-import { HttpError } from './src/errors/HttpError';
+import { HttpError } from './src/errors/httpError';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +27,4 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}\n`);
-});
+app.listen(PORT);
