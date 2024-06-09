@@ -17,7 +17,7 @@ export class HealthCheckRoutes {
 
   private async pingController(req: Request, res: Response) {
     const result = HealthCheckService.ping();
-    res.status(200).send(result);
+    res.status(200).json(result);
   }
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {
@@ -28,7 +28,7 @@ export class HealthCheckRoutes {
           new HttpError(404, 'Document Not Found.')
         );
       }
-      res.status(200).send(result);
+      res.status(200).json(result);
     } catch (error) {
       return next(
         new HttpError(500, 'Internal Server Error.')

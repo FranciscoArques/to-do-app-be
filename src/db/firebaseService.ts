@@ -24,4 +24,5 @@ class FirebaseService {
 
 const firebaseServiceInstance = new FirebaseService();
 
+export const adminInstance = firebaseServiceInstance.getAdmin();
 export const db = firebaseServiceInstance.getDb();
