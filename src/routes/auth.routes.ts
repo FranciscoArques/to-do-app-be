@@ -12,6 +12,7 @@ export class AuthRoutes {
 
   private init(): void {
     this.router.post('/register', this.createUserController.bind(this));
+    this.router.post('/login', this.loginUserController.bind(this));
   }
 
   private async createUserController(req: Request, res: Response, next: NextFunction) {
@@ -27,16 +28,40 @@ export class AuthRoutes {
       );
     }
     try {
-      const { ...result } = await AuthService.createUser(name, email, password1);
-      if (!result || result.code || !result.uid) {
+      const { uid, code, message } = await AuthService.createUser(name, email, password1);
+      if ( code || !uid) {
         return next(
           new HttpError(
             400,
-            result.message ? result.message : 'Bad Request.')
+            message ? message : 'Bad Request.')
         );
       }
-      return res.status(201).json({ uid: result.uid })
-    } catch (error) {
+      return res.status(201).json({ uid })
+    } catch(error) {
+      return next(
+        new HttpError(500, 'Internal Server Error.')
+      );
+    }
+  }
+
+  private async loginUserController(req: Request, res: Response, next: NextFunction){
+    const {email, password} = req.body;
+    if(!email || !password) {
+      return next(
+        new HttpError(400, 'Missing Body.')
+      );
+    }
+    try {
+      const { login, code, message } = await AuthService.loginUser(email, password);
+      if (code || !login) {
+        return next(
+          new HttpError(
+            400,
+            message ? message : 'Bad Request.')
+        );
+      }
+      return res.status(200).json({ login })
+    } catch(error) {
       return next(
         new HttpError(500, 'Internal Server Error.')
       );
