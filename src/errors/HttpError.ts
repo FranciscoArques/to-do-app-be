@@ -1,4 +1,4 @@
-export interface HttpError {
+export interface IHttpError {
   status: number;
   message: string;
   name: string;

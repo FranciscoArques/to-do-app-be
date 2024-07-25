@@ -8,8 +8,8 @@ import firebaseClientConfig from './firebase.client.json';
 class FirebaseService {
   private adminInstance: admin.app.App;
   private dbInstance: Firestore;
-  private clientApp: FirebaseApp
-  private clientAuth: Auth
+  private clientApp: FirebaseApp;
+  private clientAuth: Auth;
 
   constructor() {
     this.adminInstance = admin.initializeApp({

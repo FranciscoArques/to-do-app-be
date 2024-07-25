@@ -20,9 +20,7 @@ const mainRoutes = new MainRoutes();
 app.use('/api', mainRoutes.router);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  return next(
-      new HttpError(404, 'Route does not exists.')
-  );
+  return next(new HttpError(404, 'Route does not exists.'));
 });
 
 app.use(errorHandler);

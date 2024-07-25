@@ -1,4 +1,4 @@
-import type { DocumentData } from "firebase/firestore";
+import type { DocumentData } from 'firebase/firestore';
 
 export interface HealthCheckDTO {
   pingResponse: PingResponseDTO;
@@ -6,8 +6,8 @@ export interface HealthCheckDTO {
 }
 
 type PingResponseDTO = {
-  message: string
-  code?: number,
+  message: string;
+  code?: number;
 };
 
 type PingDbResponseDTO = DocumentData;

@@ -9,10 +9,10 @@ export class AuthService {
       const userRecord = await adminInstance.auth().createUser({
         email,
         password,
-        displayName: name,
+        displayName: name
       });
-      return { uid: userRecord.uid }
-    } catch(error: unknown) {
+      return { uid: userRecord.uid };
+    } catch (error: unknown) {
       return catchErrorHandler(error, 'createUser');
     }
   }
@@ -20,8 +20,8 @@ export class AuthService {
   public static async loginUser(email: string, password: string): Promise<AuthDTO['loginUserResponseDTO']> {
     try {
       const login = await signInWithEmailAndPassword(auth, email, password);
-      return { login }
-    } catch(error: unknown) {
+      return { login };
+    } catch (error: unknown) {
       return catchErrorHandler(error, 'loginUser');
     }
   }

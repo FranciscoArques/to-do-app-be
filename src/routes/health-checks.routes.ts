@@ -24,15 +24,11 @@ export class HealthCheckRoutes {
     try {
       const result = await HealthCheckService.pingDb();
       if (!result) {
-        return next(
-          new HttpError(404, 'Document Not Found.')
-        );
+        return next(new HttpError(404, 'Document Not Found.'));
       }
       res.status(200).json(result);
     } catch (error) {
-      return next(
-        new HttpError(500, 'Internal Server Error.')
-      );
+      return next(new HttpError(500, 'Internal Server Error.'));
     }
   }
 }

@@ -19,9 +19,26 @@
     "prettier"
   ],
   "rules": {
+    "max-len": ["error", { "code": 160 }],
+    "function-paren-newline": ["error", "consistent"],
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
     "@typescript-eslint/no-unused-vars": ["error"],
-    "prettier/prettier": "error"
+    "prettier/prettier": [
+      "error",
+      {
+        "semi": true,
+        "singleQuote": true,
+        "printWidth": 160,
+        "tabWidth": 2,
+        "trailingComma": "none",
+        "arrowParens": "always",
+        "bracketSpacing": true,
+        "jsxSingleQuote": true,
+        "endOfLine": "lf",
+        "quoteProps": "as-needed",
+        "proseWrap": "preserve"
+      }
+    ]
   }
 }

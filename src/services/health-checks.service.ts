@@ -12,11 +12,11 @@ export class HealthCheckService {
       const docRef = db.collection('test').doc('ping-db-response');
       const doc = await docRef.get();
       const result = doc.data();
-      if(!result){
-        return { code: -1, message:'pingDb: Firebase Fetch Error' }
+      if (!result) {
+        return { code: -1, message: 'pingDb: Firebase Fetch Error' };
       }
       return result;
-    } catch(error: unknown) {
+    } catch (error: unknown) {
       return catchErrorHandler(error, 'pingDb');
     }
   }
