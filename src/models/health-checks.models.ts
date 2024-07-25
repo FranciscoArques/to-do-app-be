@@ -7,6 +7,7 @@ export interface HealthCheckDTO {
 
 type PingResponseDTO = {
   message: string
+  code?: number,
 };
 
-type PingDbResponseDTO = DocumentData | undefined;
+type PingDbResponseDTO = DocumentData;

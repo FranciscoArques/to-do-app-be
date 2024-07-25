@@ -1,6 +1,7 @@
 import { adminInstance, auth } from '../db/firebaseService';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
+import { catchErrorHandler } from '../errors/catchErrorHandler';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {
@@ -12,12 +13,7 @@ export class AuthService {
       });
       return { uid: userRecord.uid }
     } catch(error: unknown) {
-      if (error instanceof Error) {
-        const code = (error as any).code;
-        const message = error.message;
-        return { code, message }
-      }
-      return { code: -1, message: 'Catch createUser Error' }
+      return catchErrorHandler(error, 'createUser');
     }
   }
 
@@ -25,13 +21,8 @@ export class AuthService {
     try {
       const login = await signInWithEmailAndPassword(auth, email, password);
       return { login }
-    } catch(error) {
-      if (error instanceof Error) {
-        const code = (error as any).code;
-        const message = error.message;
-        return { code, message }
-      }
-      return { code: -1, message: 'Catch loginUser Error' }
+    } catch(error: unknown) {
+      return catchErrorHandler(error, 'loginUser');
     }
   }
 }
