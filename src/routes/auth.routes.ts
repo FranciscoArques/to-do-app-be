@@ -20,13 +20,21 @@ export class AuthRoutes {
     if (!name || !email || !password1 || !password2) {
       return next(new HttpError(400, 'Missing Body.'));
     }
+    const nameRegex = /^[a-zA-Z\d]{2,16}$/;
+    if(!nameRegex.test(name.trim())){
+      return next(new HttpError(400, 'Inavlid Name.'));
+    }
     if (password1 !== password2) {
       return next(new HttpError(400, 'Both passwords must be the same.'));
     }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
+    if(!passwordRegex.test(password1.trim())){
+      return next(new HttpError(400, 'Invalid Password.'));
+    }
     try {
-      const { uid, code, message } = await AuthService.createUser(name, email, password1);
-      if (code || !uid) {
-        return next(new HttpError(404, message ? message : 'Bad Request.'));
+      const { uid, error, code, message } = await AuthService.createUser(name.trim(), email.trim().toLowerCase(), password1.trim());
+      if (!uid && error) {
+        return next(new HttpError(code ? code : 404, message ? message : 'Bad Request.'));
       }
       return res.status(201).json({ uid });
     } catch (error) {
@@ -40,11 +48,11 @@ export class AuthRoutes {
       return next(new HttpError(400, 'Missing Body.'));
     }
     try {
-      const { login, code, message } = await AuthService.loginUser(email, password);
-      if (code || !login) {
-        return next(new HttpError(404, message ? message : 'Bad Request.'));
+      const { login, userToken, error, code, message } = await AuthService.loginUser(email, password);
+      if ((!login || !userToken) && error) {
+        return next(new HttpError(code ? code : 404, message ? message : 'Bad Request.'));
       }
-      return res.status(200).json({ login });
+      return res.status(200).json({ login, userToken });
     } catch (error) {
       return next(new HttpError(500, 'Internal Server Error.'));
     }

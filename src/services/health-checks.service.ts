@@ -13,7 +13,7 @@ export class HealthCheckService {
       const doc = await docRef.get();
       const result = doc.data();
       if (!result) {
-        return { code: -1, message: 'pingDb: Firebase Fetch Error' };
+        return { error: true, code: 404, message: 'pingDb: Firebase Fetch Error' };
       }
       return result;
     } catch (error: unknown) {

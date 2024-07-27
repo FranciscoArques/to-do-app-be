@@ -22,9 +22,9 @@ export class HealthCheckRoutes {
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await HealthCheckService.pingDb();
-      if (!result) {
-        return next(new HttpError(404, 'Document Not Found.'));
+      const { result, error, code, message } = await HealthCheckService.pingDb();
+      if (!result && error) {
+        return next(new HttpError(code ? code : 404, message ? message : 'Document Not Found.'));
       }
       res.status(200).json(result);
     } catch (error) {
