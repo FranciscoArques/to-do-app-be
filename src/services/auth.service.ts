@@ -1,7 +1,7 @@
-import { adminInstance, auth } from '../db/firebaseService';
+import { adminInstance, auth } from '../db/firebase-service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
-import { catchErrorHandler } from '../errors/catchErrorHandler';
+import { catchErrorHandler } from '../errors/catch-error-handler';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {

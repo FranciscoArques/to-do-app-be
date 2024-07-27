@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { MainRoutes } from './src/index';
-import { errorHandler } from './src/middlewares/errorHandler';
+import { errorHandler } from './src/middlewares/error-handler';
 import { logger } from './src/middlewares/logger';
-import { HttpError } from './src/errors/httpError';
+import { HttpError } from './src/errors/http-error';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

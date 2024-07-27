@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { HttpError } from '../errors/httpError';
+import { HttpError } from '../errors/http-error';
 import { HealthCheckService } from '../services/health-checks.service';
 
 export class HealthCheckRoutes {

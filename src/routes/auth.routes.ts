@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { HttpError } from '../errors/httpError';
+import { HttpError } from '../errors/http-error';
 import { AuthService } from '../services/auth.service';
 
 export class AuthRoutes {
@@ -26,7 +26,7 @@ export class AuthRoutes {
     try {
       const { uid, code, message } = await AuthService.createUser(name, email, password1);
       if (code || !uid) {
-        return next(new HttpError(400, message ? message : 'Bad Request.'));
+        return next(new HttpError(404, message ? message : 'Bad Request.'));
       }
       return res.status(201).json({ uid });
     } catch (error) {
@@ -42,7 +42,7 @@ export class AuthRoutes {
     try {
       const { login, code, message } = await AuthService.loginUser(email, password);
       if (code || !login) {
-        return next(new HttpError(400, message ? message : 'Bad Request.'));
+        return next(new HttpError(404, message ? message : 'Bad Request.'));
       }
       return res.status(200).json({ login });
     } catch (error) {

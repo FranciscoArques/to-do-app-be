@@ -9,7 +9,8 @@ export class MainRoutes {
   public router: Router;
 
   constructor() {
-    (this.router = Router()), this.init();
+    this.router = Router();
+    this.init();
   }
 
   private init(): void {

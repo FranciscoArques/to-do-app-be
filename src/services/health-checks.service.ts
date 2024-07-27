@@ -1,6 +1,6 @@
-import { db } from '../db/firebaseService';
+import { db } from '../db/firebase-service';
 import { HealthCheckDTO } from '../models/health-checks.models';
-import { catchErrorHandler } from '../errors/catchErrorHandler';
+import { catchErrorHandler } from '../errors/catch-error-handler';
 
 export class HealthCheckService {
   public static ping(): HealthCheckDTO['pingResponse'] {
