@@ -1,5 +1,3 @@
-import { UserCredential } from 'firebase/auth';
-
 export interface AuthDTO {
   createUserResponse: CreateUserResponseDTO;
   loginUserResponseDTO: LoginUserResponseDTO;
@@ -13,7 +11,7 @@ type CreateUserResponseDTO = {
 };
 
 type LoginUserResponseDTO = {
-  login?: UserCredential;
+  iv?: string,
   userToken?: string;
   error?: boolean;
   code?: number | undefined;

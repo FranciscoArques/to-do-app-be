@@ -13,7 +13,5 @@ export class TasksRoutes {
     this.router.post('/task', this.createTaskController.bind(this));
   }
 
-  private async createTaskController(req: Request, res: Response, next: NextFunction) {
-
-  }
+  private async createTaskController(req: Request, res: Response, next: NextFunction) {}
 }

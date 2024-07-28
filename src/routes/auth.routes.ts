@@ -21,14 +21,14 @@ export class AuthRoutes {
       return next(new HttpError(400, 'Missing Body.'));
     }
     const nameRegex = /^[a-zA-Z\d]{2,16}$/;
-    if(!nameRegex.test(name.trim())){
+    if (!nameRegex.test(name.trim())) {
       return next(new HttpError(400, 'Inavlid Name.'));
     }
     if (password1 !== password2) {
       return next(new HttpError(400, 'Both passwords must be the same.'));
     }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
-    if(!passwordRegex.test(password1.trim())){
+    if (!passwordRegex.test(password1.trim())) {
       return next(new HttpError(400, 'Invalid Password.'));
     }
     try {
@@ -48,11 +48,12 @@ export class AuthRoutes {
       return next(new HttpError(400, 'Missing Body.'));
     }
     try {
-      const { login, userToken, error, code, message } = await AuthService.loginUser(email, password);
-      if ((!login || !userToken) && error) {
+      const { iv, userToken, error, code, message } = await AuthService.loginUser(email, password);
+      if (!iv || !userToken || error) {
         return next(new HttpError(code ? code : 404, message ? message : 'Bad Request.'));
       }
-      return res.status(200).json({ login, userToken });
+      res.setHeader('iv', iv);
+      return res.status(200).json({ userToken });
     } catch (error) {
       return next(new HttpError(500, 'Internal Server Error.'));
     }

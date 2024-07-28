@@ -1,15 +1,13 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { MainRoutes } from './src/index';
 import { errorHandler } from './src/middlewares/error-handler';
 import { logger } from './src/middlewares/logger';
 import { HttpError } from './src/errors/http-error';
+import { config } from './src/secrets/envs-manager';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

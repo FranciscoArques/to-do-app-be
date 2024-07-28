@@ -14,4 +14,4 @@ type PingDbResponseDTO = {
   error?: boolean;
   code?: number;
   message?: string;
-}
+};
