@@ -24,7 +24,7 @@ export const encyptData = (data: object): EncyptData => {
   }
 };
 
-export const decryptData = (iv: string, encryptedData: string): object => {
+export const decryptData = (iv: string, encryptedData: string) => {
   if (!iv || !encryptedData || !config.encryptSecretKey) {
     throw new HttpError(400, 'decryptData: missing parameters.');
   }

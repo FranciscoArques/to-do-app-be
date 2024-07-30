@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { MainRoutes } from './src/index';
-import { errorHandler } from './src/middlewares/error-handler';
-import { logger } from './src/middlewares/logger';
+import { errorHandler } from './src/middlewares/error-handler.middleware';
+import { logger } from './src/middlewares/logger.middleware';
 import { HttpError } from './src/utils/errors/http-error';
 import { config } from './src/utils/secrets/envs-manager';
 
