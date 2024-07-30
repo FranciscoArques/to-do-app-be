@@ -3,14 +3,15 @@ import moment from 'moment';
 import { adminInstance, auth, db } from '../db/firebase-service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
-import { catchErrorHandler } from '../errors/catch-error-handler';
-import { config } from '../secrets/envs-manager';
-import { encyptData, decryptData } from '../secrets/encrypt-process';
+import { HttpError } from '../utils/errors/http-error';
+import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
+import { config } from '../utils/secrets/envs-manager';
+import { encyptData } from '../utils/secrets/encrypt-process';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {
     if (!name || !email || !password) {
-      return { error: true, code: 400, message: 'createUser: missing parameters.' };
+      throw new HttpError(404, 'createUser: missing parameters.');
     }
     try {
       const userRecord = await adminInstance.auth().createUser({
@@ -19,7 +20,7 @@ export class AuthService {
         displayName: name
       });
       if (!userRecord) {
-        return { error: true, code: 400, message: 'createUser: failed firebase method createUser.' };
+        throw new HttpError(404, 'createUser: failed firebase method createUser().');
       }
       const userData = {
         email,
@@ -36,27 +37,27 @@ export class AuthService {
       await db.collection('users').doc(userRecord.uid).set(userData);
       return { uid: userRecord.uid };
     } catch (error: unknown) {
-      return catchErrorHandler(error, 'createUser');
+      return catchErrorHandler('createUser', error);
     }
   }
 
   public static async loginUser(email: string, password: string): Promise<AuthDTO['loginUserResponseDTO']> {
     if (!email || !password) {
-      return { error: true, code: 400, message: 'loginUser: missing parameters.' };
+      throw new HttpError(404, 'loginUser: missing parameters.');
     }
     try {
       const login = await signInWithEmailAndPassword(auth, email, password);
       const uid = login.user.uid;
       if (!uid) {
-        return { error: true, code: 400, message: 'loginUser: failed signInWithEmailAndPassword.' };
+        throw new HttpError(404, 'loginUser: failed signInWithEmailAndPassword.');
       }
       const userDoc = await db.collection('users').doc(uid).get();
       const userData = userDoc.data();
       if (!userDoc.exists || !userData) {
-        return { error: true, code: 404, message: 'loginUser: user not found.' };
+        throw new HttpError(404, 'loginUser: user not found.');
       }
       if (userData.isUserDisabled) {
-        return { error: true, code: 403, message: 'loginUser: user is disbled.' };
+        throw new HttpError(403, 'loginUser: user is diabled.');
       }
       const updatedUserData = {
         ...userData,
@@ -70,13 +71,13 @@ export class AuthService {
         role: userData.role
       };
       const { iv, encryptedData } = encyptData(payload);
-      const userToken = jwt.sign({encryptedData}, config.jwtSecretKey, { expiresIn: '3h' });
+      const userToken = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '3h' });
       if (!userToken) {
-        return { error: true, code: 404, message: 'loginUser: failed jsonwebtoken.' };
+        throw new HttpError(400, 'loginUser: failed jsonwebtoken.');
       }
       return { iv, userToken };
     } catch (error: unknown) {
-      return catchErrorHandler(error, 'loginUser');
+      return catchErrorHandler('loginUser', error);
     }
   }
 }

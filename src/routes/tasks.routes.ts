@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { HttpError } from '../errors/http-error';
+import { HttpError } from '../utils/errors/http-error';
 
 export class TasksRoutes {
   public router: Router;

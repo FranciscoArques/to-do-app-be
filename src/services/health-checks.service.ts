@@ -1,6 +1,7 @@
 import { db } from '../db/firebase-service';
 import { HealthCheckDTO } from '../models/health-checks.models';
-import { catchErrorHandler } from '../errors/catch-error-handler';
+import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
+import { HttpError } from '../utils/errors/http-error';
 
 export class HealthCheckService {
   public static ping(): HealthCheckDTO['pingResponse'] {
@@ -13,11 +14,11 @@ export class HealthCheckService {
       const doc = await docRef.get();
       const result = doc.data();
       if (!result) {
-        return { error: true, code: 404, message: 'pingDb: Firebase Fetch Error' };
+        throw new HttpError(404, 'pingDb: firebase fetch error.');
       }
-      return result;
+      return { result };
     } catch (error: unknown) {
-      return catchErrorHandler(error, 'pingDb');
+      return catchErrorHandler('pingDb', error);
     }
   }
 }

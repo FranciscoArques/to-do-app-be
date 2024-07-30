@@ -4,16 +4,10 @@ export interface AuthDTO {
 }
 
 type CreateUserResponseDTO = {
-  uid?: string | undefined;
-  error?: boolean;
-  code?: number | undefined;
-  message?: string | undefined;
+  uid: string | undefined;
 };
 
 type LoginUserResponseDTO = {
-  iv?: string,
-  userToken?: string;
-  error?: boolean;
-  code?: number | undefined;
-  message?: string | undefined;
+  iv: string;
+  userToken: string;
 };

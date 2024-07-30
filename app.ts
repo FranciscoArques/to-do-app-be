@@ -3,8 +3,8 @@ import bodyParser from 'body-parser';
 import { MainRoutes } from './src/index';
 import { errorHandler } from './src/middlewares/error-handler';
 import { logger } from './src/middlewares/logger';
-import { HttpError } from './src/errors/http-error';
-import { config } from './src/secrets/envs-manager';
+import { HttpError } from './src/utils/errors/http-error';
+import { config } from './src/utils/secrets/envs-manager';
 
 const app = express();
 const PORT = config.port;

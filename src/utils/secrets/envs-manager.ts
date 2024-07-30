@@ -2,11 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface Config {
-  port: string | number,
-  firebaseAdminCredentials: string,
-  jwtSecretKey: string,
-  encryptSecretKey: string
-};
+  port: string | number;
+  firebaseAdminCredentials: string;
+  jwtSecretKey: string;
+  encryptSecretKey: string;
+}
 
 export const config: Config = {
   port: process.env.PORT || 3001,

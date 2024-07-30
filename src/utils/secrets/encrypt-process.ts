@@ -1,15 +1,15 @@
 import crypto from 'crypto';
-import { config } from './envs-manager';
+import { config } from '../secrets/envs-manager';
 import { HttpError } from '../errors/http-error';
-import { catchErrorHandler } from '../errors/catch-error-handler';
+import { catchErrorHandler } from '../errors/catch-error-handlers';
 
 type EncyptData = {
-  iv: string,
-  encryptedData: string,
-}
+  iv: string;
+  encryptedData: string;
+};
 
 export const encyptData = (data: object): EncyptData => {
-  if(!data || !config.encryptSecretKey){
+  if (!data || !config.encryptSecretKey) {
     throw new HttpError(400, 'encryptData: missing parameters.');
   }
   try {
@@ -19,13 +19,13 @@ export const encyptData = (data: object): EncyptData => {
     let encrypted = cipher.update(JSON.stringify(data), 'utf-8', 'base64');
     encrypted += cipher.final('base64');
     return { iv: iv.toString('base64'), encryptedData: encrypted };
-  } catch(error) {
-    return catchErrorHandler(error, 'encyptData');
+  } catch (error) {
+    return catchErrorHandler('encyptData', error);
   }
 };
 
 export const decryptData = (iv: string, encryptedData: string): object => {
-  if(!iv || !encryptedData || !config.encryptSecretKey){
+  if (!iv || !encryptedData || !config.encryptSecretKey) {
     throw new HttpError(400, 'decryptData: missing parameters.');
   }
   try {
@@ -35,7 +35,7 @@ export const decryptData = (iv: string, encryptedData: string): object => {
     let decrypted = decipher.update(encryptedData, 'base64', 'utf-8');
     decrypted += decipher.final('utf-8');
     return JSON.parse(decrypted);
-  } catch(error){
-    return catchErrorHandler(error, 'decryptData');
+  } catch (error) {
+    return catchErrorHandler('decryptData', error);
   }
 };

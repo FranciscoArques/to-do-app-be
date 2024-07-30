@@ -10,8 +10,5 @@ type PingResponseDTO = {
 };
 
 type PingDbResponseDTO = {
-  result?: DocumentData;
-  error?: boolean;
-  code?: number;
-  message?: string;
+  result: DocumentData;
 };

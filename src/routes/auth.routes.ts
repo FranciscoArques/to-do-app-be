@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { HttpError } from '../errors/http-error';
 import { AuthService } from '../services/auth.service';
+import { HttpError } from '../utils/errors/http-error';
+import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 
 export class AuthRoutes {
   public router: Router;
@@ -32,13 +33,13 @@ export class AuthRoutes {
       return next(new HttpError(400, 'Invalid Password.'));
     }
     try {
-      const { uid, error, code, message } = await AuthService.createUser(name.trim(), email.trim().toLowerCase(), password1.trim());
-      if (!uid && error) {
-        return next(new HttpError(code ? code : 404, message ? message : 'Bad Request.'));
+      const { uid } = await AuthService.createUser(name.trim(), email.trim().toLowerCase(), password1.trim());
+      if (!uid) {
+        return next(new HttpError(404, 'Bad Request.'));
       }
       return res.status(201).json({ uid });
     } catch (error) {
-      return next(new HttpError(500, 'Internal Server Error.'));
+      return next(catchErrorHandlerController(error));
     }
   }
 
@@ -48,14 +49,14 @@ export class AuthRoutes {
       return next(new HttpError(400, 'Missing Body.'));
     }
     try {
-      const { iv, userToken, error, code, message } = await AuthService.loginUser(email, password);
-      if (!iv || !userToken || error) {
-        return next(new HttpError(code ? code : 404, message ? message : 'Bad Request.'));
+      const { iv, userToken } = await AuthService.loginUser(email, password);
+      if (!iv || !userToken) {
+        return next(new HttpError(404, 'Bad Request.'));
       }
       res.setHeader('iv', iv);
       return res.status(200).json({ userToken });
     } catch (error) {
-      return next(new HttpError(500, 'Internal Server Error.'));
+      return next(catchErrorHandlerController(error));
     }
   }
 }
