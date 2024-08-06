@@ -14,9 +14,7 @@ declare global {
   }
 }
 
-type RequiredRoles = 'client' | 'admin';
-
-export const authenticateUser = (requiredRole: RequiredRoles) => {
+export const authenticateUser = (isClientAllowed: boolean = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userToken = req.header('Authorization');
@@ -38,7 +36,7 @@ export const authenticateUser = (requiredRole: RequiredRoles) => {
       if (!userDoc.exists || !userData) {
         throw new HttpError(404, 'authenticateUser: user not found.');
       }
-      if (!requiredRole && role !== requiredRole) {
+      if (!isClientAllowed && role !== 'client') {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');
       }
       req.userSession = userData;

@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "app.ts"],
+  "ext": "ts,json",
+  "ignore": ["node_modules", "dist"],
+  "exec": "ts-node -r tsconfig-paths/register --project config/tsconfig.json app.ts",
+  "delay": "1000",
+  "verbose": true
+}
