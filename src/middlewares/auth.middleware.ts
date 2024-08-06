@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-export const authenticateUser = (isClientAllowed: boolean = false) => {
+export const authenticateUser = (isClientNotAllowed: boolean = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userToken = req.header('Authorization');
@@ -22,8 +22,8 @@ export const authenticateUser = (isClientAllowed: boolean = false) => {
       if (!userToken || !iv) {
         throw new HttpError(404, 'authenticateUser: userToken not found.');
       }
-      userToken.replace('Bearer ', '');
-      const decodedUserToken = jwt.verify(userToken, config.jwtSecretKey);
+      const parsedUserToken = userToken.replace('Bearer ', '');
+      const decodedUserToken = jwt.verify(parsedUserToken, config.jwtSecretKey);
       if (!decodedUserToken || typeof decodedUserToken === 'string') {
         throw new HttpError(400, 'authenticateUser: failed jsonwebtoken.');
       }
@@ -36,7 +36,7 @@ export const authenticateUser = (isClientAllowed: boolean = false) => {
       if (!userDoc.exists || !userData) {
         throw new HttpError(404, 'authenticateUser: user not found.');
       }
-      if (!isClientAllowed && role !== 'client') {
+      if (isClientNotAllowed && role === 'client') {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');
       }
       req.userSession = userData;

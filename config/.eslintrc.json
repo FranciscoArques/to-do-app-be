@@ -25,20 +25,7 @@
     "quotes": ["error", "single"],
     "@typescript-eslint/no-unused-vars": ["error"],
     "prettier/prettier": [
-      "error",
-      {
-        "semi": true,
-        "singleQuote": true,
-        "printWidth": 160,
-        "tabWidth": 2,
-        "trailingComma": "none",
-        "arrowParens": "always",
-        "bracketSpacing": true,
-        "jsxSingleQuote": true,
-        "endOfLine": "lf",
-        "quoteProps": "as-needed",
-        "proseWrap": "preserve"
-      }
+      "error"
     ]
   }
 }

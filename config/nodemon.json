@@ -1,8 +1,6 @@
 {
-  "watch": ["src", "app.ts"],
+  "watch": ["src", "app.ts", "config", "postman", "package.json", "package-lock.json", ".prettierrc", ".env", "readme.md"],
   "ext": "ts,json",
   "ignore": ["node_modules", "dist"],
-  "exec": "ts-node -r tsconfig-paths/register --project config/tsconfig.json app.ts",
-  "delay": "1000",
-  "verbose": true
+  "exec": "ts-node -r tsconfig-paths/register --project config/tsconfig.json app.ts"
 }
