@@ -6,7 +6,7 @@ import { AuthDTO } from '../models/auth.models';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';
-import { encyptData } from '../utils/secrets/encrypt-process';
+import { encyptData } from '../utils/secrets/encryptation-processes';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {

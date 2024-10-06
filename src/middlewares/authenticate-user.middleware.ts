@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { db } from '../db/firebase-service';
-import { decryptData } from '../utils/secrets/encrypt-process';
+import { decryptData } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';

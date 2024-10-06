@@ -1,5 +1,6 @@
 import crypto from 'crypto';
-import { config } from '../secrets/envs-manager';
+import bcrypt from 'bcrypt';
+import { config } from './envs-manager';
 import { HttpError } from '../errors/http-error';
 import { catchErrorHandler } from '../errors/catch-error-handlers';
 
@@ -37,5 +38,24 @@ export const decryptData = (iv: string, encryptedData: string) => {
     return JSON.parse(decrypted);
   } catch (error) {
     return catchErrorHandler('decryptData', error);
+  }
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = 10;
+  try {
+    const hashedPassword = await bcrypt.hash(`${password}${config.hashPasswordSecretKey}`, saltRounds);
+    return hashedPassword;
+  } catch (error) {
+    return catchErrorHandler('hashPassword', error);
+  }
+};
+
+export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
+  try {
+    const match = await bcrypt.compare(`${password}${config.hashPasswordSecretKey}`, hashedPassword);
+    return match;
+  } catch (error) {
+    return catchErrorHandler('comparePassword', error);
   }
 };

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { HealthCheckService } from '../services/health-checks.service';
-import { authenticateUser } from '../middlewares/auth.middleware';
+import { authenticateUser } from '../middlewares/authenticate-user.middleware';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 

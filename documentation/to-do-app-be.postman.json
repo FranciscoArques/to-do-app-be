@@ -1,0 +1,935 @@
+{
+	"info": {
+		"_postman_id": "07fed5ae-2718-4cf9-9d11-c206574342fb",
+		"name": "to-do-app-be",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31003554"
+	},
+	"item": [
+		{
+			"name": "token",
+			"item": [
+				{
+					"name": "register-token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "mail@mail.com",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "frantoken",
+									"type": "text"
+								},
+								{
+									"key": "password1",
+									"value": "Holi1234",
+									"type": "text"
+								},
+								{
+									"key": "password2",
+									"value": "Holi1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/token/register-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"token",
+								"register-token"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201-register-token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "mail@mail.com",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "frantoken",
+											"type": "text"
+										},
+										{
+											"key": "password1",
+											"value": "Holi1234",
+											"type": "text"
+										},
+										{
+											"key": "password2",
+											"value": "Holi1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/token/register-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"token",
+										"register-token"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3d-w7B9UuZ6krrVwstQv/GnBhXjSw0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:19:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"token created\",\n    \"tokenUid\": \"jiMvKIx1rLxxB0BHSBbk\"\n}"
+						},
+						{
+							"name": "409-register-token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "mail@mail.com",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "frantoken",
+											"type": "text"
+										},
+										{
+											"key": "password1",
+											"value": "Holi1234",
+											"type": "text"
+										},
+										{
+											"key": "password2",
+											"value": "Holi1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/token/register-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"token",
+										"register-token"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "52"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"34-j/M5umOuLX6z+LBTAb6lJ/Uh8EQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:29:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 409,\n    \"message\": \"Token Already Registered.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "get-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  if (responseJson && responseJson.token) {\r",
+									"    pm.collectionVariables.set(\"token\", responseJson.token);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"token\");\r",
+									"    console.error(\"Error: token not found in response JSON\");\r",
+									"  }\r",
+									"} catch (e) {\r",
+									"  pm.collectionVariables.unset(\"token\");\r",
+									"  console.error(\"Error parsing response: \", e);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "uid",
+								"value": "xoSnQaHQOCsKcVHURuKE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "mail@mail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Holi1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/token/get-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"token",
+								"get-token"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201-get-token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "uid",
+										"value": "xoSnQaHQOCsKcVHURuKE",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "mail@mail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "Holi1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/token/get-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"token",
+										"get-token"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "329"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"149-k7ZcsYONw2Ubv2nlpbQdsT/3Hm4\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:15:19 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"XyAY965HFOeVVvmsQ5wM7A==:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidEFLSlcycDY2WGNyTzA0TENRSFcwaGU4elJLYVFHK3hUVWYxa1NoNnZueGs5TndkdnpiZ0NJZHo1bCs4a25HZHdWYS9EbDcwN0ZYZTQ4M0dKQmozanc9PSIsImlhdCI6MTcyODE4NDUxOSwiZXhwIjoxNzI4MTg4MTE5fQ.amn9gRpFJ6xBk75wMXX7V7BlNeBEmcTWdvDgTaMcNTk\",\n    \"expiresIn\": \"1 hour\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "health-checks",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200-ping",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "authenticate-token",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/healtchecks/ping",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"healtchecks",
+										"ping"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "18"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"12-6FyCUNJCdUkgXM8yXmM99u6fQw0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:32:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"pong\"\n}"
+						}
+					]
+				},
+				{
+					"name": "ping-db",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping-db",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping-db"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200-ping-db",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "authenticate-token",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/healtchecks/ping-db",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"healtchecks",
+										"ping-db"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "21"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"15-KNG9oi4PMrcO0S6CPirf4Cv6B4c\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:32:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"pong-db\"\n}"
+						}
+					]
+				},
+				{
+					"name": "ping-auth-admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							},
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping-auth-admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping-auth-admin"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "403-ping-auth-admin",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "iv",
+										"value": "{{ivLogin}}",
+										"type": "text"
+									},
+									{
+										"key": "authenticate-token",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/healtchecks/ping-auth-admin",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"healtchecks",
+										"ping-auth-admin"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"46-+FWqTMlMzV5dy4u02oQ6go6uARU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:33:27 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 403,\n    \"message\": \"authenticateUser: insufficient permissions.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "ping-auth-client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							},
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping-auth-client",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping-auth-client"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200-ping-auth-client",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "iv",
+										"value": "{{ivLogin}}",
+										"type": "text"
+									},
+									{
+										"key": "authenticate-token",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/healtchecks/ping-auth-client",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"healtchecks",
+										"ping-auth-client"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "243"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"f3-u1MihZqsiFh13JlaOy9he7hUe4Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:34:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userData\": {\n        \"role\": \"client\",\n        \"tasksCompleted\": 0,\n        \"isUserDeleted\": false,\n        \"tasksCreated\": 0,\n        \"name\": \"third\",\n        \"creationDate\": \"26-07-2024 22:43:29\",\n        \"tasksDroped\": 0,\n        \"email\": \"fran@third.com\",\n        \"isUserDisabled\": false,\n        \"lastConnection\": \"06-10-2024 00:16:24\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"third\",\r\n    \"email\": \"fran@third.com\",\r\n    \"password1\": \"Password123\",\r\n    \"password2\": \"Password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  if (responseJson && responseJson.userToken) {\r",
+									"    pm.collectionVariables.set(\"userTokenLogin\", responseJson.userToken);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"userTokenLogin\");\r",
+									"    console.error(\"Error: userToken not found in response JSON\");\r",
+									"  }\r",
+									"  const iv = pm.response.headers.get('iv');\r",
+									"  if (iv) {\r",
+									"    pm.collectionVariables.set(\"ivLogin\", iv);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"ivLogin\");\r",
+									"    console.error(\"Error: iv header not found in response\");\r",
+									"  }\r",
+									"} catch (e) {\r",
+									"  pm.collectionVariables.unset(\"userTokenLogin\");\r",
+									"  pm.collectionVariables.unset(\"ivLogin\");\r",
+									"  console.error(\"Error parsing response: \", e);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"fran@third.com\",\r\n    \"password\": \"Password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200-login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "authenticate-token",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"fran@third.com\",\r\n    \"password\": \"Password123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "iv",
+									"value": "4H35b2WxUzr60ki3S5yhcQ=="
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "340"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"154-/8Cwj3Rp3+BVKSah0/UUA7AcW7k\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 06 Oct 2024 03:34:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidXJyYTNHUG9rSjhlVVBvS0w2UEpiRlN4UUtkbTd5OUdJeng0eFlyei8weG1hdHQ5Z012ZXZydVlaZUZoUHE3Q1lGRDlDeGJORlVEcXF5UGdvNE8vdHdCMXdJSSt5QVpYUmUxeEc2RmxNQllRZUdxd2orVEVVUTI3NDVxS0hLdGciLCJpYXQiOjE3MjgxODU2NjMsImV4cCI6MTcyODE5NjQ2M30.QvMu8E3tisO6JshtAAOT4RjlriuN3e0mgumPxYiNwP4\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "userTokenLogin",
+			"value": ""
+		},
+		{
+			"key": "ivLogin",
+			"value": ""
+		}
+	]
+}
