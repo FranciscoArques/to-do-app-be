@@ -6,7 +6,7 @@ import { AuthDTO } from '../models/auth.models';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';
-import { encyptData } from '../utils/secrets/encryptation-processes';
+import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {
@@ -70,7 +70,7 @@ export class AuthService {
         name: userData.name,
         role: userData.role
       };
-      const { iv, encryptedData } = encyptData(payload);
+      const { iv, encryptedData } = EncryptationProcesses.encyptData(payload);
       const userToken = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '3h' });
       if (!userToken) {
         throw new HttpError(400, 'loginUser: failed jsonwebtoken.');

@@ -2,10 +2,19 @@ import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../db/firebase-service';
-import { encyptData, decryptData, hashPassword, comparePassword } from '../utils/secrets/encryptation-processes';
+import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler, catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';
+
+interface TokenMiddlewareDTO {
+  registerTokenService: RegisterTokenService;
+}
+
+type RegisterTokenService = {
+  message: 'token created';
+  tokenUid: string;
+};
 
 export class TokenMiddleware {
   public router: Router;
@@ -16,8 +25,8 @@ export class TokenMiddleware {
   };
 
   private init(): void {
-    this.router.post('/token/get-token', this.getTokenController.bind(this));
-    this.router.post('/token/register-token', this.registerTokenController.bind(this));
+    this.router.post('/get-token', this.getTokenController.bind(this));
+    this.router.post('/register-token', this.registerTokenController.bind(this));
   };
 
   public isTokenAuthenticated = () => {
@@ -37,17 +46,20 @@ export class TokenMiddleware {
         if (!decodedToken || typeof decodedToken === 'string') {
           throw new HttpError(400, 'isTokenAuthenticated: failed jsonwebtoken.');
         }
-        const { uid, email } = decryptData(iv, decodedToken.encryptedData);
+        const { uid, email } = EncryptationProcesses.decryptData(iv, decodedToken.encryptedData);
         if (!uid || !email) {
-          throw new HttpError(400, 'authenticate: failed decryptData.');
+          throw new HttpError(400, 'isTokenAuthenticated: failed decryptData.');
         }
         const tokenDoc = await db.collection('token').doc(uid).get();
         const tokenData = tokenDoc.data();
         if (!tokenDoc.exists || !tokenData) {
-          throw new HttpError(404, 'authenticate: token not found.');
+          throw new HttpError(404, 'isTokenAuthenticated: token not found.');
+        }
+        if (email !== tokenData.email) {
+          throw new HttpError(403, 'isTokenAuthenticated: credentials mismatch.');
         }
         if (tokenData.isTokenDisabled || tokenData.isTokenDeleted) {
-          throw new HttpError(403, 'authenticate: token not available.');
+          throw new HttpError(403, 'isTokenAuthenticated: token not available.');
         }
         next();
       } catch (error) {
@@ -117,7 +129,7 @@ export class TokenMiddleware {
     }
   };
 
-  private getTokenService = async (uid: string, email: string, password: string) => {
+  private getTokenService = async (uid: string, email: string, password: string): Promise<string> => {
     if (!uid || !email || !password) {
       throw new HttpError(400, 'getTokenService: missing parameters.');
     }
@@ -131,7 +143,7 @@ export class TokenMiddleware {
       if(!dbEmail || !dbPassword) {
         throw new HttpError(400, 'getTokenService: missing data in db.');
       }
-      const isSamePassword = await comparePassword(password, dbPassword);
+      const isSamePassword = await EncryptationProcesses.comparePassword(password, dbPassword);
       if(!isSamePassword || email !== dbEmail) {
         throw new HttpError(400, 'getTokenService: credentials mismatch.');
       }
@@ -143,7 +155,7 @@ export class TokenMiddleware {
         lastConnection: moment().format('DD-MM-YYYY HH:mm:ss')
       };
       await db.collection('token').doc(uid).set(updateTokenData);
-      const { iv, encryptedData } = encyptData({ uid, email });
+      const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
       const token = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '1h' });
       const result = `${iv}:${token}`;
       return result
@@ -152,12 +164,12 @@ export class TokenMiddleware {
     }
   };
 
-  private async registerTokenService(name: string, email: string, password: string) {
+  private async registerTokenService(name: string, email: string, password: string): Promise<TokenMiddlewareDTO['registerTokenService']> {
     if (!name || !email || !password) {
       throw new HttpError(400, 'registerTokenService: missing parameters.');
     }
     try {
-      const hashedPassword = await hashPassword(password);
+      const hashedPassword = await EncryptationProcesses.hashPassword(password);
       const tokenData = {
         email,
         name,

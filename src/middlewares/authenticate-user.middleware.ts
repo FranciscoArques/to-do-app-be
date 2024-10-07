@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { db } from '../db/firebase-service';
-import { decryptData } from '../utils/secrets/encryptation-processes';
+import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';
@@ -27,7 +27,7 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
       if (!decodedUserToken || typeof decodedUserToken === 'string') {
         throw new HttpError(400, 'authenticateUser: failed jsonwebtoken.');
       }
-      const { uid, email, name, role } = decryptData(iv, decodedUserToken.encryptedData);
+      const { uid, email, name, role } = EncryptationProcesses.decryptData(iv, decodedUserToken.encryptedData);
       if (!uid || !email || !name || !role) {
         throw new HttpError(400, 'authenticateUser: failed decryptData.');
       }

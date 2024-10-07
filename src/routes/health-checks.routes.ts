@@ -24,7 +24,7 @@ export class HealthCheckRoutes {
     if (!message) {
       return next(new HttpError(404, 'Document Not Found.'));
     }
-    res.status(200).json({ message });
+    return res.status(200).json({ message });
   }
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {
@@ -33,7 +33,7 @@ export class HealthCheckRoutes {
       if (!result) {
         return next(new HttpError(404, 'Document Not Found.'));
       }
-      res.status(200).json(result);
+      return res.status(200).json(result);
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }
