@@ -9,6 +9,12 @@
     "lint:fix": "eslint . --ext .js,.ts --config config/.eslintrc.json --fix",
     "prettier": "prettier --config .prettierrc --ignore-path config/.prettierignore \"app.ts\" \"src/**/*.{js,ts}\" --write"
   },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --config config/.eslintrc.json",
+      "prettier --config .prettierrc --write"
+    ]
+  },
   "author": "fran_arques",
   "license": "ISC",
   "dependencies": {
@@ -36,6 +42,8 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.10",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.1",
     "prettier": "^3.3.1",
