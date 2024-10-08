@@ -7,7 +7,8 @@
     "start": "nodemon --config config/nodemon.json --exec ts-node -r tsconfig-paths/register --project config/tsconfig.json app.ts",
     "lint": "eslint . --ext .js,.ts --config config/.eslintrc.json",
     "lint:fix": "eslint . --ext .js,.ts --config config/.eslintrc.json --fix",
-    "prettier": "prettier --config .prettierrc --ignore-path config/.prettierignore \"app.ts\" \"src/**/*.{js,ts}\" --write"
+    "prettier": "prettier --config .prettierrc --ignore-path config/.prettierignore \"app.ts\" \"src/**/*.{js,ts}\" --write",
+    "prepare": "npx husky-init"
   },
   "lint-staged": {
     "*.ts": [

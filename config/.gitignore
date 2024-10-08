@@ -5,3 +5,4 @@ dist/
 .env
 src/db/firebase.json
 src/db/firebase.client.json
+.husky/husky.sh
