@@ -19,7 +19,7 @@ class App {
     this.PORT = config.port;
     this.tokenMiddleware = new TokenMiddleware();
     this.mainRoutes = new MainRoutes();
-    
+
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
@@ -42,7 +42,6 @@ class App {
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       next(new HttpError(404, 'Route does not exist.'));
     });
-    
     this.app.use(errorHandler);
   }
 

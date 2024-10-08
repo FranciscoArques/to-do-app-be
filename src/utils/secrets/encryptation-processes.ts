@@ -10,7 +10,6 @@ type EncyptData = {
 };
 
 export class EncryptationProcesses {
-
   public static encyptData = (data: object): EncyptData => {
     if (!data || !config.encryptSecretKey) {
       throw new HttpError(400, 'encryptData: missing parameters.');
@@ -52,7 +51,7 @@ export class EncryptationProcesses {
       return catchErrorHandler('hashPassword', error);
     }
   };
-  
+
   public static comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
     try {
       const match = await bcrypt.compare(`${password}${config.hashPasswordSecretKey}`, hashedPassword);
@@ -61,5 +60,4 @@ export class EncryptationProcesses {
       return catchErrorHandler('comparePassword', error);
     }
   };
-
-};
+}

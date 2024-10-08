@@ -22,12 +22,12 @@ export class TokenMiddleware {
   constructor() {
     this.router = Router();
     this.init();
-  };
+  }
 
   private init(): void {
     this.router.post('/get-token', this.getTokenController.bind(this));
     this.router.post('/register-token', this.registerTokenController.bind(this));
-  };
+  }
 
   public isTokenAuthenticated = () => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -40,7 +40,7 @@ export class TokenMiddleware {
         const parsedTokenSplited = parsedToken.split(':');
         if (parsedTokenSplited.length !== 2) {
           throw new HttpError(400, 'isTokenAuthenticated: invalid token format.');
-        }  
+        }
         const [iv, token] = parsedTokenSplited;
         const decodedToken = jwt.verify(token, config.jwtSecretKey);
         if (!decodedToken || typeof decodedToken === 'string') {
@@ -80,14 +80,14 @@ export class TokenMiddleware {
     }
     try {
       const token = await this.getTokenService(uid, email, password);
-      if(!token) {
+      if (!token) {
         return next(new HttpError(400, 'Cannot get Token.'));
       }
       return res.status(201).json({ token, expiresIn: '1 hour' });
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }
-  };
+  }
 
   private async registerTokenController(req: Request, res: Response, next: NextFunction) {
     const contentType = req.headers['content-type'];
@@ -116,7 +116,7 @@ export class TokenMiddleware {
     try {
       const checkEmailDB = await db.collection('token').where('email', '==', email).get();
       const isAlreadyToken = !checkEmailDB?.empty;
-      if(isAlreadyToken) {
+      if (isAlreadyToken) {
         return next(new HttpError(409, 'Token Already Registered.'));
       }
       const { message, tokenUid } = await this.registerTokenService(name.trim(), email.trim().toLowerCase(), password1.trim());
@@ -127,7 +127,7 @@ export class TokenMiddleware {
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }
-  };
+  }
 
   private getTokenService = async (uid: string, email: string, password: string): Promise<string> => {
     if (!uid || !email || !password) {
@@ -136,18 +136,18 @@ export class TokenMiddleware {
     try {
       const docRef = await db.collection('token').doc(uid).get();
       const tokenData = docRef.data();
-      if(!tokenData) {
+      if (!tokenData) {
         throw new HttpError(404, 'getTokenService: token not found in db.');
       }
       const { email: dbEmail, password: dbPassword, isTokenDisabled, isTokenDeleted } = tokenData;
-      if(!dbEmail || !dbPassword) {
+      if (!dbEmail || !dbPassword) {
         throw new HttpError(400, 'getTokenService: missing data in db.');
       }
       const isSamePassword = await EncryptationProcesses.comparePassword(password, dbPassword);
-      if(!isSamePassword || email !== dbEmail) {
+      if (!isSamePassword || email !== dbEmail) {
         throw new HttpError(400, 'getTokenService: credentials mismatch.');
       }
-      if(isTokenDisabled || isTokenDeleted) {
+      if (isTokenDisabled || isTokenDeleted) {
         throw new HttpError(400, 'getTokenService: token not available.');
       }
       const updateTokenData = {
@@ -158,7 +158,7 @@ export class TokenMiddleware {
       const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
       const token = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '1h' });
       const result = `${iv}:${token}`;
-      return result
+      return result;
     } catch (error) {
       return catchErrorHandler('getTokenService', error);
     }
@@ -186,4 +186,4 @@ export class TokenMiddleware {
       return catchErrorHandler('createUser', error);
     }
   }
-};
+}

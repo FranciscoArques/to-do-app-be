@@ -10,7 +10,7 @@ export class HealthCheckService {
 
   public static async pingDb(): Promise<HealthCheckDTO['pingDbResponse']> {
     try {
-      const docRef = db.collection('test').doc('ping-db-response');
+      const docRef = db.collection('token').doc('ping-db-response');
       const doc = await docRef.get();
       const result = doc.data();
       if (!result) {

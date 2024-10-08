@@ -6,13 +6,24 @@ import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { config } from '../utils/secrets/envs-manager';
 
-declare global {
-  namespace Express {
-    interface Request {
-      userSession?: any;
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    userSession?: userSession | FirebaseFirestore.DocumentData;
   }
 }
+
+type userSession = {
+  email: string;
+  name: string;
+  role: 'client' | 'admin';
+  creationDate: string;
+  lastConnection: string;
+  tasksCreated: number;
+  tasksCompleted: number;
+  tasksDroped: number;
+  isUserDisabled: boolean;
+  isUserDeleted: boolean;
+};
 
 export const authenticateUser = (isClientNotAllowed: boolean = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
