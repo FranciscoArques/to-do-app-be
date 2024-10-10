@@ -8,11 +8,11 @@ import { config } from '../utils/secrets/envs-manager';
 
 declare module 'express-serve-static-core' {
   interface Request {
-    userSession?: userSession | FirebaseFirestore.DocumentData;
+    userSession?: UserSession | FirebaseFirestore.DocumentData;
   }
 }
 
-type userSession = {
+type UserSession = {
   email: string;
   name: string;
   role: 'client' | 'admin';
@@ -25,6 +25,10 @@ type userSession = {
   isUserDeleted: boolean;
 };
 
+type DecodedToken = {
+  encryptedData: string;
+};
+
 export const authenticateUser = (isClientNotAllowed: boolean = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -33,18 +37,14 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
       if (!userToken || !iv) {
         throw new HttpError(404, 'authenticateUser: userToken not found.');
       }
-      const parsedUserToken = userToken.replace('Bearer ', '');
-      const decodedUserToken = jwt.verify(parsedUserToken, config.jwtSecretKey);
-      if (!decodedUserToken || typeof decodedUserToken === 'string') {
-        throw new HttpError(400, 'authenticateUser: failed jsonwebtoken.');
-      }
-      const { uid, email, name, role } = EncryptationProcesses.decryptData(iv, decodedUserToken.encryptedData);
-      if (!uid || !email || !name || !role) {
-        throw new HttpError(400, 'authenticateUser: failed decryptData.');
-      }
-      const userDoc = await db.collection('users').doc(uid).get();
-      const userData = userDoc.data();
-      if (!userDoc.exists || !userData) {
+      const decodedToken = jwt.verify(userToken.replace('Bearer ', ''), config.jwtSecretKey) as DecodedToken;
+      const { uid, email, role } = EncryptationProcesses.decryptData(iv, decodedToken.encryptedData);
+      const userData = await db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) => (doc.exists ? doc.data() : ''));
+      if (!userData || userData.email !== email) {
         throw new HttpError(404, 'authenticateUser: user not found.');
       }
       if (isClientNotAllowed && role === 'client') {

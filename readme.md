@@ -23,13 +23,25 @@ git clone https://github.com/FranciscoArques/to-do-app-be.git
 ```bash
 # Navigate to the project directory
 cd to-do-app-be
+```
 
+```bash
 # Node version
 nvm use 21.1.0
+```
 
 # Install dependencies
-npm install
 
+```bash
+npm install
+```
+
+```bash
+# Install husky
+npm run prepare
+```
+
+```bash
 # Start the server
 npm run start
 ```

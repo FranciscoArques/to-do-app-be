@@ -29,11 +29,11 @@ export class HealthCheckRoutes {
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {
     try {
-      const { result } = await HealthCheckService.pingDb();
-      if (!result) {
+      const { data } = await HealthCheckService.pingDb();
+      if (!data) {
         return next(new HttpError(404, 'Document Not Found.'));
       }
-      return res.status(200).json(result);
+      return res.status(200).json(data);
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }
@@ -41,11 +41,11 @@ export class HealthCheckRoutes {
 
   private async pingAuthClientController(req: Request, res: Response, next: NextFunction) {
     try {
-      const userData = req.userSession;
-      if (!userData) {
-        return next(new HttpError(401, 'No User Data.'));
+      const { userSession } = req;
+      if (!userSession) {
+        return next(new HttpError(401, 'No User Data on Session for Client.'));
       }
-      return res.status(200).json({ userData });
+      return res.status(200).json({ userSession });
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }
@@ -53,11 +53,11 @@ export class HealthCheckRoutes {
 
   private async pingAuthAdminController(req: Request, res: Response, next: NextFunction) {
     try {
-      const userData = req.userSession;
-      if (!userData) {
-        return next(new HttpError(401, 'No User Data.'));
+      const { userSession } = req;
+      if (!userSession) {
+        return next(new HttpError(401, 'No User Data on Session for Admin.'));
       }
-      return res.status(200).json({ userData });
+      return res.status(200).json({ userSession });
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }

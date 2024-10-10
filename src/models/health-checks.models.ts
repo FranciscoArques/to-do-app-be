@@ -10,5 +10,5 @@ type PingResponseDTO = {
 };
 
 type PingDbResponseDTO = {
-  result: DocumentData;
+  data?: DocumentData | '';
 };
