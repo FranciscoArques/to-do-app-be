@@ -44,8 +44,11 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
         .doc(uid)
         .get()
         .then((doc) => (doc.exists ? doc.data() : ''));
-      if (!userData || userData.email !== email) {
+      if (!userData) {
         throw new HttpError(404, 'authenticateUser: user not found.');
+      }
+      if (userData.email !== email) {
+        throw new HttpError(403, 'authenticateUser: insufficient permissions.');
       }
       if (isClientNotAllowed && role === 'client') {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');

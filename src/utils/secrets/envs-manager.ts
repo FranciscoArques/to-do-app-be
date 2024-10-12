@@ -16,3 +16,8 @@ export const config: Config = {
   encryptSecretKey: process.env.ENCRYPTION_PROCESS_SECRET_KEY || '',
   hashPasswordSecretKey: process.env.HASH_PASSWORD_SECRET_KEY || ''
 };
+
+export const Regex = {
+  userName: /^[a-zA-Z\d]{2,16}$/,
+  userPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/
+};

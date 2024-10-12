@@ -10,9 +10,6 @@ import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {
-    if (!name || !email || !password) {
-      throw new HttpError(404, 'createUser: missing parameters.');
-    }
     try {
       const userRecord = await adminInstance.auth().createUser({
         email,
@@ -42,22 +39,22 @@ export class AuthService {
   }
 
   public static async loginUser(email: string, password: string): Promise<AuthDTO['loginUserResponseDTO']> {
-    if (!email || !password) {
-      throw new HttpError(404, 'loginUser: missing parameters.');
-    }
     try {
       const login = await signInWithEmailAndPassword(auth, email, password);
       const uid = login.user.uid;
       if (!uid) {
         throw new HttpError(404, 'loginUser: failed signInWithEmailAndPassword.');
       }
-      const userDoc = await db.collection('users').doc(uid).get();
-      const userData = userDoc.data();
-      if (!userDoc.exists || !userData) {
+      const userData = await db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) => (doc.exists ? doc.data() : ''));
+      if (!userData) {
         throw new HttpError(404, 'loginUser: user not found.');
       }
-      if (userData.isUserDisabled) {
-        throw new HttpError(403, 'loginUser: user is diabled.');
+      if (userData.isUserDisabled || userData.isUserDeleted) {
+        throw new HttpError(403, 'loginUser: user is not available.');
       }
       const updatedUserData = {
         ...userData,

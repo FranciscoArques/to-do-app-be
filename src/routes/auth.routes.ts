@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { Regex } from '../utils/secrets/envs-manager';
 import { AuthService } from '../services/auth.service';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
@@ -21,15 +22,13 @@ export class AuthRoutes {
     if (!name || !email || !password1 || !password2) {
       return next(new HttpError(400, 'Missing Body.'));
     }
-    const nameRegex = /^[a-zA-Z\d]{2,16}$/;
-    if (!nameRegex.test(name.trim())) {
+    if (!Regex.userName.test(name.trim())) {
       return next(new HttpError(400, 'Inavlid Name.'));
     }
     if (password1 !== password2) {
       return next(new HttpError(400, 'Both passwords must be the same.'));
     }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
-    if (!passwordRegex.test(password1.trim())) {
+    if (!Regex.userPassword.test(password1.trim())) {
       return next(new HttpError(400, 'Invalid Password.'));
     }
     try {

@@ -28,13 +28,13 @@ class App {
   private initializeMiddlewares(): void {
     this.app.use(logger());
     this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(EncryptDecryptBodyMiddleware.encryptBody);
     this.app.use('/token', this.tokenMiddleware.router);
     this.app.use(bodyParser.json());
     this.app.use(this.tokenMiddleware.isTokenAuthenticated());
   }
 
   private initializeRoutes(): void {
-    this.app.use(EncryptDecryptBodyMiddleware.encryptBody);
     this.app.use('/api', this.mainRoutes.router);
   }
 

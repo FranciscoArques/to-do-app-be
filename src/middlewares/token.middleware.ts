@@ -5,7 +5,7 @@ import { db } from '../db/firebase-service';
 import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler, catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
-import { config } from '../utils/secrets/envs-manager';
+import { config, Regex } from '../utils/secrets/envs-manager';
 
 interface TokenMiddlewareDTO {
   registerTokenService: RegisterTokenService;
@@ -14,6 +14,10 @@ interface TokenMiddlewareDTO {
 type RegisterTokenService = {
   message: 'token created';
   tokenUid: string;
+};
+
+type DecodedToken = {
+  encryptedData: string;
 };
 
 export class TokenMiddleware {
@@ -36,26 +40,25 @@ export class TokenMiddleware {
         if (!reqToken) {
           throw new HttpError(404, 'isTokenAuthenticated: token not found.');
         }
-        const parsedToken = reqToken.replace('Bearer ', '');
-        const parsedTokenSplited = parsedToken.split(':');
-        if (parsedTokenSplited.length !== 2) {
-          throw new HttpError(400, 'isTokenAuthenticated: invalid token format.');
-        }
-        const [iv, token] = parsedTokenSplited;
-        const decodedToken = jwt.verify(token, config.jwtSecretKey);
-        if (!decodedToken || typeof decodedToken === 'string') {
+        const parsedToken = reqToken.replace('Bearer ', '').split(':');
+        const [iv, token] = parsedToken;
+        const decodedToken = jwt.verify(token, config.jwtSecretKey) as DecodedToken;
+        if (!decodedToken) {
           throw new HttpError(400, 'isTokenAuthenticated: failed jsonwebtoken.');
         }
         const { uid, email } = EncryptationProcesses.decryptData(iv, decodedToken.encryptedData);
         if (!uid || !email) {
           throw new HttpError(400, 'isTokenAuthenticated: failed decryptData.');
         }
-        const tokenDoc = await db.collection('token').doc(uid).get();
-        const tokenData = tokenDoc.data();
-        if (!tokenDoc.exists || !tokenData) {
+        const tokenData = await db
+          .collection('token')
+          .doc(uid)
+          .get()
+          .then((doc) => (doc.exists ? doc.data() : ''));
+        if (!tokenData) {
           throw new HttpError(404, 'isTokenAuthenticated: token not found.');
         }
-        if (email !== tokenData.email) {
+        if (tokenData.email !== email) {
           throw new HttpError(403, 'isTokenAuthenticated: credentials mismatch.');
         }
         if (tokenData.isTokenDisabled || tokenData.isTokenDeleted) {
@@ -73,7 +76,7 @@ export class TokenMiddleware {
     if (!contentType || contentType !== 'application/x-www-form-urlencoded') {
       return next(new HttpError(400, 'Only urlencoded data accepted.'));
     }
-    const uid = Array.isArray(req.headers['uid']) ? req.headers['uid'][0] : req.headers['uid'];
+    const uid = req.headers['uid'] as string;
     const { email, password } = req.body;
     if (!uid || !email || !password) {
       return next(new HttpError(400, 'Missing Body.'));
@@ -98,8 +101,7 @@ export class TokenMiddleware {
     if (!name || !email || !password1 || !password2) {
       return next(new HttpError(400, 'Missing Body.'));
     }
-    const nameRegex = /^[a-zA-Z\d]{2,16}$/;
-    if (!nameRegex.test(name.trim())) {
+    if (!Regex.userName.test(name.trim())) {
       return next(new HttpError(400, 'Inavlid Name.'));
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -109,14 +111,12 @@ export class TokenMiddleware {
     if (password1 !== password2) {
       return next(new HttpError(400, 'Both passwords must be the same.'));
     }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
-    if (!passwordRegex.test(password1.trim())) {
+    if (!Regex.userPassword.test(password1.trim())) {
       return next(new HttpError(400, 'Invalid Password.'));
     }
     try {
       const checkEmailDB = await db.collection('token').where('email', '==', email).get();
-      const isAlreadyToken = !checkEmailDB?.empty;
-      if (isAlreadyToken) {
+      if (!checkEmailDB?.empty) {
         return next(new HttpError(409, 'Token Already Registered.'));
       }
       const { message, tokenUid } = await this.registerTokenService(name.trim(), email.trim().toLowerCase(), password1.trim());
@@ -130,12 +130,12 @@ export class TokenMiddleware {
   }
 
   private getTokenService = async (uid: string, email: string, password: string): Promise<string> => {
-    if (!uid || !email || !password) {
-      throw new HttpError(400, 'getTokenService: missing parameters.');
-    }
     try {
-      const docRef = await db.collection('token').doc(uid).get();
-      const tokenData = docRef.data();
+      const tokenData = await db
+        .collection('token')
+        .doc(uid)
+        .get()
+        .then((doc) => (doc.exists ? doc.data() : ''));
       if (!tokenData) {
         throw new HttpError(404, 'getTokenService: token not found in db.');
       }
@@ -150,11 +150,11 @@ export class TokenMiddleware {
       if (isTokenDisabled || isTokenDeleted) {
         throw new HttpError(400, 'getTokenService: token not available.');
       }
-      const updateTokenData = {
+      const updatedTokenData = {
         ...tokenData,
         lastConnection: moment().format('DD-MM-YYYY HH:mm:ss')
       };
-      await db.collection('token').doc(uid).set(updateTokenData);
+      await db.collection('token').doc(uid).set(updatedTokenData);
       const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
       const token = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '1h' });
       const result = `${iv}:${token}`;
@@ -165,9 +165,6 @@ export class TokenMiddleware {
   };
 
   private async registerTokenService(name: string, email: string, password: string): Promise<TokenMiddlewareDTO['registerTokenService']> {
-    if (!name || !email || !password) {
-      throw new HttpError(400, 'registerTokenService: missing parameters.');
-    }
     try {
       const hashedPassword = await EncryptationProcesses.hashPassword(password);
       const tokenData = {
