@@ -6,7 +6,7 @@ import { EncryptDecryptBodyMiddleware } from './src/middlewares/encrypt-and-decr
 import { errorHandler } from './src/middlewares/error-handler.middleware';
 import { logger } from './src/middlewares/logger.middleware';
 import { HttpError } from './src/utils/errors/http-error';
-import { config } from './src/utils/secrets/envs-manager';
+import { Config } from './src/utils/secrets/envs-manager';
 
 class App {
   public app: express.Application;
@@ -16,7 +16,7 @@ class App {
 
   constructor() {
     this.app = express();
-    this.PORT = config.port;
+    this.PORT = Config.port;
     this.tokenMiddleware = new TokenMiddleware();
     this.mainRoutes = new MainRoutes();
 

@@ -2,10 +2,11 @@ import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../db/firebase-service';
+import { authenticateUser } from '../middlewares/authenticate-user.middleware';
 import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler, catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
-import { config, Regex } from '../utils/secrets/envs-manager';
+import { Config, Regex } from '../utils/secrets/envs-manager';
 
 interface TokenMiddlewareDTO {
   registerTokenService: RegisterTokenService;
@@ -30,7 +31,10 @@ export class TokenMiddleware {
 
   private init(): void {
     this.router.post('/get-token', this.getTokenController.bind(this));
-    this.router.post('/register-token', this.registerTokenController.bind(this));
+    this.router.post('/register-token', authenticateUser(true), this.registerTokenController.bind(this));
+    // this.router.patch('/disable', authenticateUser(true), this.disableTokenController.bind(this));
+    // this.router.patch('/enable', authenticateUser(true), this.enableTokenController.bind(this));
+    // this.router.delete('/delete-admin', authenticateUser(true), this.deleteTokenController.bind(this));
   }
 
   public isTokenAuthenticated = () => {
@@ -42,7 +46,7 @@ export class TokenMiddleware {
         }
         const parsedToken = reqToken.replace('Bearer ', '').split(':');
         const [iv, token] = parsedToken;
-        const decodedToken = jwt.verify(token, config.jwtSecretKey) as DecodedToken;
+        const decodedToken = jwt.verify(token, Config.jwtSecretKey) as DecodedToken;
         if (!decodedToken) {
           throw new HttpError(400, 'isTokenAuthenticated: failed jsonwebtoken.');
         }
@@ -61,7 +65,7 @@ export class TokenMiddleware {
         if (tokenData.email !== email) {
           throw new HttpError(403, 'isTokenAuthenticated: credentials mismatch.');
         }
-        if (tokenData.isTokenDisabled || tokenData.isTokenDeleted) {
+        if (tokenData.isTokenDisabled) {
           throw new HttpError(403, 'isTokenAuthenticated: token not available.');
         }
         next();
@@ -139,7 +143,7 @@ export class TokenMiddleware {
       if (!tokenData) {
         throw new HttpError(404, 'getTokenService: token not found in db.');
       }
-      const { email: dbEmail, password: dbPassword, isTokenDisabled, isTokenDeleted } = tokenData;
+      const { email: dbEmail, password: dbPassword, isTokenDisabled } = tokenData;
       if (!dbEmail || !dbPassword) {
         throw new HttpError(400, 'getTokenService: missing data in db.');
       }
@@ -147,7 +151,7 @@ export class TokenMiddleware {
       if (!isSamePassword || email !== dbEmail) {
         throw new HttpError(400, 'getTokenService: credentials mismatch.');
       }
-      if (isTokenDisabled || isTokenDeleted) {
+      if (isTokenDisabled) {
         throw new HttpError(400, 'getTokenService: token not available.');
       }
       const updatedTokenData = {
@@ -156,7 +160,7 @@ export class TokenMiddleware {
       };
       await db.collection('token').doc(uid).set(updatedTokenData);
       const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
-      const token = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ encryptedData }, Config.jwtSecretKey, { expiresIn: '1h' });
       const result = `${iv}:${token}`;
       return result;
     } catch (error) {
@@ -173,8 +177,7 @@ export class TokenMiddleware {
         password: hashedPassword,
         creationDate: moment().format('DD-MM-YYYY HH:mm:ss'),
         lastConnection: moment().format('DD-MM-YYYY HH:mm:ss'),
-        isTokenDisabled: false,
-        isTokenDeleted: false
+        isTokenDisabled: false
       };
       const tokenRef = await db.collection('token').add(tokenData);
       const tokenUid = tokenRef.id;

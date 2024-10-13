@@ -9,7 +9,7 @@ interface Config {
   hashPasswordSecretKey: string;
 }
 
-export const config: Config = {
+export const Config: Config = {
   port: process.env.PORT || '3001',
   firebaseAdminCredentials: process.env.GOOGLE_APPLICATION_CREDENTIALS || '',
   jwtSecretKey: process.env.JWT_SECRET_KEY || '',
@@ -18,6 +18,6 @@ export const config: Config = {
 };
 
 export const Regex = {
-  userName: /^[a-zA-Z\d]{2,16}$/,
-  userPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/
+  userName: process.env.REGEX_USER_NAME ? new RegExp(`^${process.env.REGEX_USER_NAME}$`) : /^[a-zA-Z\d]{2,16}$/,
+  userPassword: process.env.REGEX_USER_PASSWORD ? new RegExp(`^${process.env.REGEX_USER_PASSWORD}$`) : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/
 };

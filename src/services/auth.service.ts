@@ -5,11 +5,11 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
-import { config } from '../utils/secrets/envs-manager';
+import { Config } from '../utils/secrets/envs-manager';
 import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 
 export class AuthService {
-  public static async createUser(name: string, email: string, password: string): Promise<AuthDTO['createUserResponse']> {
+  public static async createUser(name: string, email: string, password: string, isAdmin: boolean = false): Promise<AuthDTO['createUserResponse']> {
     try {
       const userRecord = await adminInstance.auth().createUser({
         email,
@@ -22,7 +22,7 @@ export class AuthService {
       const userData = {
         email,
         name,
-        role: 'client',
+        role: isAdmin ? 'admin' : 'client',
         creationDate: moment().format('DD-MM-YYYY HH:mm:ss'),
         lastConnection: moment().format('DD-MM-YYYY HH:mm:ss'),
         tasksCreated: 0,
@@ -68,13 +68,100 @@ export class AuthService {
         role: userData.role
       };
       const { iv, encryptedData } = EncryptationProcesses.encyptData(payload);
-      const userToken = jwt.sign({ encryptedData }, config.jwtSecretKey, { expiresIn: '3h' });
+      const userToken = jwt.sign({ encryptedData }, Config.jwtSecretKey, { expiresIn: '3h' });
       if (!userToken) {
         throw new HttpError(400, 'loginUser: failed jsonwebtoken.');
       }
       return { iv, userToken };
     } catch (error: unknown) {
       return catchErrorHandler('loginUser', error);
+    }
+  }
+
+  public static async disableUser(uid: string): Promise<AuthDTO['disableUserResponseDTO']> {
+    try {
+      await adminInstance.auth().updateUser(uid, { disabled: true });
+      await db
+        .collection('users')
+        .doc(uid)
+        .update({ isUserDisabled: moment().format('DD-MM-YYYY HH:mm:ss') });
+      return { message: 'user is now disabled' };
+    } catch (error: unknown) {
+      return catchErrorHandler('disableUser', error);
+    }
+  }
+
+  public static async enableUser(uid: string): Promise<AuthDTO['enabledUserResponseDTO']> {
+    try {
+      await adminInstance.auth().updateUser(uid, { disabled: false });
+      await db.collection('users').doc(uid).update({ isUserDisabled: false });
+      return { message: 'user is now enabled' };
+    } catch (error: unknown) {
+      return catchErrorHandler('enableUser', error);
+    }
+  }
+
+  public static async deleteUser(uid: string): Promise<AuthDTO['deleteUserResponseDTO']> {
+    try {
+      const userData = await db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) => (doc.exists ? doc.data() : ''));
+      if (!userData) {
+        throw new HttpError(404, 'deleteUser: user not found on db.');
+      }
+      if (userData.isUserDeleted) {
+        throw new HttpError(409, 'deleteUser: user already deleted.');
+      }
+      await adminInstance.auth().updateUser(uid, { disabled: true });
+      await db
+        .collection('users')
+        .doc(uid)
+        .update({ isUserDeleted: moment().format('DD-MM-YYYY HH:mm:ss') });
+      return { message: 'user is now deleted' };
+    } catch (error: unknown) {
+      return catchErrorHandler('deleteUser', error);
+    }
+  }
+
+  public static async restoreUser(uid: string): Promise<AuthDTO['restoreUserResponseDTO']> {
+    try {
+      const userData = await db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) => (doc.exists ? doc.data() : ''));
+      if (!userData) {
+        throw new HttpError(404, 'restoreUser: user not found on db.');
+      }
+      if (!userData.isUserDeleted) {
+        throw new HttpError(409, 'restoreUser: user already restored.');
+      }
+      await adminInstance.auth().updateUser(uid, { disabled: false });
+      await db.collection('users').doc(uid).update({ isUserDeleted: false });
+      return { message: 'user is now restored' };
+    } catch (error: unknown) {
+      return catchErrorHandler('restoreUser', error);
+    }
+  }
+
+  public static async deleteAdmin(): Promise<AuthDTO['deleteAdminResponseDTO']> {
+    const usersUids: string[] = [];
+    const thirtyDaysAgo = moment().subtract(30, 'days').format('DD-MM-YYYY HH:mm:ss');
+    try {
+      const snapshot = await db.collection('users').where('isUserDeleted', '<=', thirtyDaysAgo).get();
+      if (!snapshot.empty) {
+        snapshot.forEach((doc) => {
+          usersUids.push(doc.id);
+        });
+      }
+      const deleteUserDoc = usersUids.map((uid) => db.collection('users').doc(uid).delete());
+      const deleteUserAuth = usersUids.map((uid) => adminInstance.auth().deleteUser(uid));
+      await Promise.all([...deleteUserDoc, ...deleteUserAuth]);
+      return { message: 'users in db deleted permanently', usersDeleted: usersUids.length };
+    } catch (error: unknown) {
+      return catchErrorHandler('deleteAdmin', error);
     }
   }
 }

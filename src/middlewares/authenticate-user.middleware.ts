@@ -4,15 +4,16 @@ import { db } from '../db/firebase-service';
 import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
-import { config } from '../utils/secrets/envs-manager';
+import { Config } from '../utils/secrets/envs-manager';
 
 declare module 'express-serve-static-core' {
   interface Request {
-    userSession?: UserSession | FirebaseFirestore.DocumentData;
+    userSession: UserSession;
   }
 }
 
 type UserSession = {
+  uid: string;
   email: string;
   name: string;
   role: 'client' | 'admin';
@@ -37,7 +38,7 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
       if (!userToken || !iv) {
         throw new HttpError(404, 'authenticateUser: userToken not found.');
       }
-      const decodedToken = jwt.verify(userToken.replace('Bearer ', ''), config.jwtSecretKey) as DecodedToken;
+      const decodedToken = jwt.verify(userToken.replace('Bearer ', ''), Config.jwtSecretKey) as DecodedToken;
       const { uid, email, role } = EncryptationProcesses.decryptData(iv, decodedToken.encryptedData);
       const userData = await db
         .collection('users')
@@ -47,13 +48,13 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
       if (!userData) {
         throw new HttpError(404, 'authenticateUser: user not found.');
       }
-      if (userData.email !== email) {
+      if (userData.email !== email || userData.isUserDisabled || userData.isUserDeleted) {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');
       }
       if (isClientNotAllowed && role === 'client') {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');
       }
-      req.userSession = userData;
+      req.userSession = { uid, ...userData } as UserSession;
       next();
     } catch (error) {
       return next(catchErrorHandlerController(error));
