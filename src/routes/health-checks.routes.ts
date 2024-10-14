@@ -14,17 +14,26 @@ export class HealthCheckRoutes {
 
   private init(): void {
     this.router.get('/ping', this.pingController.bind(this));
+    this.router.get('/ping-send-email', authenticateUser(true), this.pingSendEmailController.bind(this));
     this.router.get('/ping-db', this.pingDbController.bind(this));
     this.router.get('/ping-auth-client', authenticateUser(), this.pingAuthClientController.bind(this));
     this.router.get('/ping-auth-admin', authenticateUser(true), this.pingAuthAdminController.bind(this));
   }
 
-  private async pingController(req: Request, res: Response, next: NextFunction) {
+  private pingController(req: Request, res: Response, next: NextFunction) {
     const { message } = HealthCheckService.ping();
     if (!message) {
       return next(new HttpError(404, 'Document Not Found.'));
     }
     return res.status(200).json({ message });
+  }
+
+  private async pingSendEmailController(req: Request, res: Response, next: NextFunction) {
+    const { accepted, rejected } = await HealthCheckService.pingSendEmail();
+    if (!accepted || !rejected) {
+      return next(new HttpError(404, 'Document Not Found.'));
+    }
+    return res.status(200).json({ accepted: accepted.length, rejected: rejected.length });
   }
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {

@@ -7,6 +7,8 @@ interface Config {
   jwtSecretKey: string;
   encryptSecretKey: string;
   hashPasswordSecretKey: string;
+  senderEmail: string;
+  senderEmailPassword: string;
 }
 
 export const Config: Config = {
@@ -14,7 +16,9 @@ export const Config: Config = {
   firebaseAdminCredentials: process.env.GOOGLE_APPLICATION_CREDENTIALS || '',
   jwtSecretKey: process.env.JWT_SECRET_KEY || '',
   encryptSecretKey: process.env.ENCRYPTION_PROCESS_SECRET_KEY || '',
-  hashPasswordSecretKey: process.env.HASH_PASSWORD_SECRET_KEY || ''
+  hashPasswordSecretKey: process.env.HASH_PASSWORD_SECRET_KEY || '',
+  senderEmail: process.env.SENDER_EMAIL || '',
+  senderEmailPassword: process.env.SENDER_EMAIL_PASSWORD || ''
 };
 
 export const Regex = {

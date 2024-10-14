@@ -34,7 +34,7 @@ export class TokenMiddleware {
     this.router.post('/register-token', authenticateUser(true), this.registerTokenController.bind(this));
     // this.router.patch('/disable', authenticateUser(true), this.disableTokenController.bind(this));
     // this.router.patch('/enable', authenticateUser(true), this.enableTokenController.bind(this));
-    // this.router.delete('/delete-admin', authenticateUser(true), this.deleteTokenController.bind(this));
+    // this.router.delete('/delete', authenticateUser(true), this.deleteTokenController.bind(this));
   }
 
   public isTokenAuthenticated = () => {
