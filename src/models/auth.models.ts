@@ -6,6 +6,8 @@ export interface AuthDTO {
   enabledUserResponseDTO: EnabledUserResponseDTO;
   restoreUserResponseDTO: RestoreUserResponseDTO;
   deleteAdminResponseDTO: DeleteAdminResponseDTO;
+  emailChangePasswordResponseDTO: EmailChangePasswordResponseDTO;
+  changePasswordResponseDTO: ChangePasswordResponseDTO;
 }
 
 type CreateUserResponseDTO = {
@@ -15,6 +17,15 @@ type CreateUserResponseDTO = {
 type LoginUserResponseDTO = {
   iv: string;
   userToken: string;
+};
+
+type EmailChangePasswordResponseDTO = {
+  message: 'email sent';
+  userToken: string;
+};
+
+type ChangePasswordResponseDTO = {
+  message: 'password successfully changed';
 };
 
 type DisableUserResponseDTO = {

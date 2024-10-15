@@ -33,6 +33,7 @@ nvm use 21.1.0
 # Install dependencies
 
 ```bash
+# Install dependencies
 npm install
 ```
 

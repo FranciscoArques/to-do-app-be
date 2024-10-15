@@ -3,6 +3,7 @@ import moment from 'moment';
 import { adminInstance, auth, db } from '../db/firebase-service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
+import { sendEmailInstances } from '../utils/send-email';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
 import { Config } from '../utils/secrets/envs-manager';
@@ -32,6 +33,10 @@ export class AuthService {
         isUserDeleted: false
       };
       await db.collection('users').doc(userRecord.uid).set(userData);
+      const { acceptedEmail } = await sendEmailInstances('register-user', email);
+      if (!acceptedEmail) {
+        throw new HttpError(404, 'createUser: send email rejected.');
+      }
       return { uid: userRecord.uid };
     } catch (error: unknown) {
       return catchErrorHandler('createUser', error);
@@ -75,6 +80,41 @@ export class AuthService {
       return { iv, userToken };
     } catch (error: unknown) {
       return catchErrorHandler('loginUser', error);
+    }
+  }
+
+  public static async emailChangePassword(email: string): Promise<AuthDTO['emailChangePasswordResponseDTO']> {
+    try {
+      const snapshot = await db.collection('users').where('email', '==', email).get();
+      if (snapshot.empty) {
+        throw new HttpError(404, 'emailChangePassword: email not found.');
+      }
+      const { acceptedEmail } = await sendEmailInstances('send-email-change-password-user', email);
+      if (!acceptedEmail) {
+        throw new HttpError(404, 'emailChangePassword: send email rejected.');
+      }
+      const uid = snapshot.docs[0].data().uid || '';
+      const { iv, encryptedData } = EncryptationProcesses.encyptData(uid);
+      const payload = `${iv}:${encryptedData}`;
+      const userToken = jwt.sign({ payload }, Config.jwtSecretKey, { expiresIn: '15m' });
+      return { message: 'email sent', userToken };
+    } catch (error: unknown) {
+      return catchErrorHandler('emailChangePassword', error);
+    }
+  }
+
+  public static async changePassword(token: string, newPassword: string): Promise<AuthDTO['changePasswordResponseDTO']> {
+    try {
+      const decodedToken = jwt.verify(token, Config.jwtSecretKey);
+      const [iv, encryptedData] = decodedToken.split(':');
+      const { uid } = EncryptationProcesses.decryptData(iv, encryptedData);
+      if (!uid) {
+        throw new HttpError(404, 'changePassword: uid not found.');
+      }
+      await adminInstance.auth().updateUser(uid, { password: newPassword });
+      return { message: 'password successfully changed' };
+    } catch (error: unknown) {
+      return catchErrorHandler('changePassword', error);
     }
   }
 

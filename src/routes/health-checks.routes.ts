@@ -29,11 +29,12 @@ export class HealthCheckRoutes {
   }
 
   private async pingSendEmailController(req: Request, res: Response, next: NextFunction) {
-    const { accepted, rejected } = await HealthCheckService.pingSendEmail();
-    if (!accepted || !rejected) {
-      return next(new HttpError(404, 'Document Not Found.'));
+    try {
+      const { acceptedEmail, rejectedEmail } = await HealthCheckService.pingSendEmail();
+      return res.status(200).json({ acceptedEmail, rejectedEmail });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
     }
-    return res.status(200).json({ accepted: accepted.length, rejected: rejected.length });
   }
 
   private async pingDbController(req: Request, res: Response, next: NextFunction) {

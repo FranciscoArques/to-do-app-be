@@ -23,5 +23,6 @@ export const Config: Config = {
 
 export const Regex = {
   userName: process.env.REGEX_USER_NAME ? new RegExp(`^${process.env.REGEX_USER_NAME}$`) : /^[a-zA-Z\d]{2,16}$/,
-  userPassword: process.env.REGEX_USER_PASSWORD ? new RegExp(`^${process.env.REGEX_USER_PASSWORD}$`) : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/
+  userPassword: process.env.REGEX_USER_PASSWORD ? new RegExp(`^${process.env.REGEX_USER_PASSWORD}$`) : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/,
+  userEmail: process.env.REGEX_USER_EMAIL ? new RegExp(`^${process.env.REGEX_USER_EMAIL}$`) : /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 };

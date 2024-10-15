@@ -10,8 +10,8 @@ export class HealthCheckService {
   }
 
   public static async pingSendEmail(): Promise<HealthCheckDTO['pingSendEmailResponseDTO']> {
-    const { accepted, rejected } = await sendEmailInstances('ping-send-email', Config.senderEmail);
-    return { accepted, rejected };
+    const { acceptedEmail, rejectedEmail } = await sendEmailInstances('ping-send-email', Config.senderEmail);
+    return { acceptedEmail, rejectedEmail };
   }
 
   public static async pingDb(): Promise<HealthCheckDTO['pingDbResponse']> {

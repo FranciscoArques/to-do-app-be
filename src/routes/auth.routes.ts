@@ -17,7 +17,8 @@ export class AuthRoutes {
     this.router.post('/register', this.createUserController.bind(this));
     this.router.post('/register-admin', authenticateUser(true), this.createAdminController.bind(this));
     this.router.post('/login', this.loginUserController.bind(this));
-    // this.router.patch('/change-password', this.changePasswordUserController.bind(this));
+    this.router.patch('/send-email-change-password', this.emailChangePasswordUserController.bind(this));
+    this.router.patch('/change-password', this.changePasswordUserController.bind(this));
     this.router.patch('/disable', authenticateUser(), this.disableUserController.bind(this));
     this.router.patch('/enable', authenticateUser(), this.enableUserController.bind(this));
     this.router.patch('/delete', authenticateUser(true), this.deleteUserController.bind(this));
@@ -92,6 +93,44 @@ export class AuthRoutes {
     }
   }
 
+  private async emailChangePasswordUserController(req: Request, res: Response, next: NextFunction) {
+    const { email } = req.body;
+    if (!email) {
+      return next(new HttpError(400, 'Missing Body.'));
+    }
+    try {
+      const { message, userToken } = await AuthService.emailChangePassword(email);
+      if (!message || !userToken) {
+        return next(new HttpError(404, 'Bad Request.'));
+      }
+      return res.status(200).json({ message, userToken });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private async changePasswordUserController(req: Request, res: Response, next: NextFunction) {
+    const { token, password1, password2 } = req.body;
+    if (!token) {
+      return next(new HttpError(400, 'Missing Body.'));
+    }
+    if (password1 !== password2) {
+      return next(new HttpError(400, 'Both passwords must be the same.'));
+    }
+    if (!Regex.userPassword.test(password1.trim())) {
+      return next(new HttpError(400, 'Invalid Password.'));
+    }
+    try {
+      const { message } = await AuthService.changePassword(token, password1);
+      if (!message) {
+        return next(new HttpError(404, 'Bad Request.'));
+      }
+      return res.status(200).json({ message });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
   private async disableUserController(req: Request, res: Response, next: NextFunction) {
     const { uid, isUserDisabled } = req.userSession;
     if (!uid) {
@@ -111,22 +150,6 @@ export class AuthRoutes {
     }
   }
 
-  private async deleteUserController(req: Request, res: Response, next: NextFunction) {
-    const { uid } = req.body;
-    if (!uid) {
-      return next(new HttpError(400, 'Missing Body.'));
-    }
-    try {
-      const { message } = await AuthService.deleteUser(uid);
-      if (!message) {
-        return next(new HttpError(400, 'Could Not Delete User.'));
-      }
-      return res.status(200).json({ message });
-    } catch (error) {
-      return next(catchErrorHandlerController(error));
-    }
-  }
-
   private async enableUserController(req: Request, res: Response, next: NextFunction) {
     const { uid, isUserDisabled } = req.userSession;
     if (!uid) {
@@ -139,6 +162,22 @@ export class AuthRoutes {
       const { message } = await AuthService.enableUser(uid);
       if (!message) {
         return next(new HttpError(400, 'Could Not Enable User.'));
+      }
+      return res.status(200).json({ message });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private async deleteUserController(req: Request, res: Response, next: NextFunction) {
+    const { uid } = req.body;
+    if (!uid) {
+      return next(new HttpError(400, 'Missing Body.'));
+    }
+    try {
+      const { message } = await AuthService.deleteUser(uid);
+      if (!message) {
+        return next(new HttpError(400, 'Could Not Delete User.'));
       }
       return res.status(200).json({ message });
     } catch (error) {

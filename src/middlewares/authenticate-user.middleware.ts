@@ -5,6 +5,7 @@ import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { Config } from '../utils/secrets/envs-manager';
+import type { DecodedToken } from '../models/token.middleware.models';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -24,10 +25,6 @@ type UserSession = {
   tasksDroped: number;
   isUserDisabled: boolean;
   isUserDeleted: boolean;
-};
-
-type DecodedToken = {
-  encryptedData: string;
 };
 
 export const authenticateUser = (isClientNotAllowed: boolean = false) => {

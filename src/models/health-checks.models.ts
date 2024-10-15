@@ -1,5 +1,4 @@
 import type { DocumentData } from 'firebase/firestore';
-import type { Address } from '../utils/send-email';
 
 export interface HealthCheckDTO {
   pingResponse: PingResponseDTO;
@@ -12,8 +11,8 @@ type PingResponseDTO = {
 };
 
 type PingSendEmailResponseDTO = {
-  accepted: (string | Address)[];
-  rejected: (string | Address)[];
+  acceptedEmail: number;
+  rejectedEmail: number;
 };
 
 type PingDbResponseDTO = {

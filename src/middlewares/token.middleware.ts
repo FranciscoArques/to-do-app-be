@@ -7,19 +7,7 @@ import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
 import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler, catchErrorHandlerController } from '../utils/errors/catch-error-handlers';
 import { Config, Regex } from '../utils/secrets/envs-manager';
-
-interface TokenMiddlewareDTO {
-  registerTokenService: RegisterTokenService;
-}
-
-type RegisterTokenService = {
-  message: 'token created';
-  tokenUid: string;
-};
-
-type DecodedToken = {
-  encryptedData: string;
-};
+import type { TokenMiddlewareDTO, DecodedToken } from '../models/token.middleware.models';
 
 export class TokenMiddleware {
   public router: Router;
@@ -32,9 +20,9 @@ export class TokenMiddleware {
   private init(): void {
     this.router.post('/get-token', this.getTokenController.bind(this));
     this.router.post('/register-token', authenticateUser(true), this.registerTokenController.bind(this));
-    // this.router.patch('/disable', authenticateUser(true), this.disableTokenController.bind(this));
-    // this.router.patch('/enable', authenticateUser(true), this.enableTokenController.bind(this));
-    // this.router.delete('/delete', authenticateUser(true), this.deleteTokenController.bind(this));
+    this.router.patch('/disable', authenticateUser(true), this.disableTokenController.bind(this));
+    this.router.patch('/enable', authenticateUser(true), this.enableTokenController.bind(this));
+    this.router.delete('/delete', authenticateUser(true), this.deleteTokenController.bind(this));
   }
 
   public isTokenAuthenticated = () => {
@@ -44,8 +32,7 @@ export class TokenMiddleware {
         if (!reqToken) {
           throw new HttpError(404, 'isTokenAuthenticated: token not found.');
         }
-        const parsedToken = reqToken.replace('Bearer ', '').split(':');
-        const [iv, token] = parsedToken;
+        const [iv, token] = reqToken.replace('Bearer ', '').split(':');
         const decodedToken = jwt.verify(token, Config.jwtSecretKey) as DecodedToken;
         if (!decodedToken) {
           throw new HttpError(400, 'isTokenAuthenticated: failed jsonwebtoken.');
@@ -86,7 +73,7 @@ export class TokenMiddleware {
       return next(new HttpError(400, 'Missing Body.'));
     }
     try {
-      const token = await this.getTokenService(uid, email, password);
+      const { token } = await this.getTokenService(uid, email, password);
       if (!token) {
         return next(new HttpError(400, 'Cannot get Token.'));
       }
@@ -108,8 +95,7 @@ export class TokenMiddleware {
     if (!Regex.userName.test(name.trim())) {
       return next(new HttpError(400, 'Inavlid Name.'));
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!Regex.userEmail.test(email.trim())) {
       return next(new HttpError(400, 'Inavlid Email.'));
     }
     if (password1 !== password2) {
@@ -133,7 +119,51 @@ export class TokenMiddleware {
     }
   }
 
-  private getTokenService = async (uid: string, email: string, password: string): Promise<string> => {
+  private async disableTokenController(req: Request, res: Response, next: NextFunction) {
+    const { uid } = req.body;
+    if (!uid) {
+      return next(new HttpError(400, 'Missing Body. '));
+    }
+    try {
+      const { message } = await this.disableTokenService(uid);
+      if (!message) {
+        return next(new HttpError(400, 'Could Not Disable Token.'));
+      }
+      return res.status(200).json({ message });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private async enableTokenController(req: Request, res: Response, next: NextFunction) {
+    const { uid } = req.body;
+    if (!uid) {
+      return next(new HttpError(400, 'Missing Body. '));
+    }
+    try {
+      const { message } = await this.enableTokenService(uid);
+      if (!message) {
+        return next(new HttpError(400, 'Could Not Enable Token.'));
+      }
+      return res.status(200).json({ message });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private async deleteTokenController(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { message, tokensDeleted } = await this.deleteToken();
+      if (!message) {
+        return next(new HttpError(400, 'Could Not Run Delete Token.'));
+      }
+      return res.status(200).json({ message: tokensDeleted ? message : 'no token to delete', tokensDeleted });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private getTokenService = async (uid: string, email: string, password: string): Promise<TokenMiddlewareDTO['getTokenResponseDTO']> => {
     try {
       const tokenData = await db
         .collection('token')
@@ -160,15 +190,15 @@ export class TokenMiddleware {
       };
       await db.collection('token').doc(uid).set(updatedTokenData);
       const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
-      const token = jwt.sign({ encryptedData }, Config.jwtSecretKey, { expiresIn: '1h' });
-      const result = `${iv}:${token}`;
-      return result;
+      const jwToken = jwt.sign({ encryptedData }, Config.jwtSecretKey, { expiresIn: '1h' });
+      const token = `${iv}:${jwToken}`;
+      return { token };
     } catch (error) {
       return catchErrorHandler('getTokenService', error);
     }
   };
 
-  private async registerTokenService(name: string, email: string, password: string): Promise<TokenMiddlewareDTO['registerTokenService']> {
+  private async registerTokenService(name: string, email: string, password: string): Promise<TokenMiddlewareDTO['registerTokenResponseDTO']> {
     try {
       const hashedPassword = await EncryptationProcesses.hashPassword(password);
       const tokenData = {
@@ -184,6 +214,45 @@ export class TokenMiddleware {
       return { message: 'token created', tokenUid };
     } catch (error: unknown) {
       return catchErrorHandler('createUser', error);
+    }
+  }
+
+  private async disableTokenService(uid: string): Promise<TokenMiddlewareDTO['disableTokenResponseDTO']> {
+    try {
+      await db
+        .collection('token')
+        .doc(uid)
+        .update({ isTokenDisabled: moment().format('DD-MM-YYYY HH:mm:ss') });
+      return { message: 'token is now disabled' };
+    } catch (error: unknown) {
+      return catchErrorHandler('disableTokenService', error);
+    }
+  }
+
+  private async enableTokenService(uid: string): Promise<TokenMiddlewareDTO['enableTokenResponseDTO']> {
+    try {
+      await db.collection('token').doc(uid).update({ isTokenDisabled: false });
+      return { message: 'token is now enabled' };
+    } catch (error: unknown) {
+      return catchErrorHandler('enableTokenService', error);
+    }
+  }
+
+  public async deleteToken(): Promise<TokenMiddlewareDTO['deleteTokenResponseDTO']> {
+    const tokensUids: string[] = [];
+    const thirtyDaysAgo = moment().subtract(30, 'days').format('DD-MM-YYYY HH:mm:ss');
+    try {
+      const snapshot = await db.collection('token').where('isTokenDisabled', '<=', thirtyDaysAgo).get();
+      if (!snapshot.empty) {
+        snapshot.forEach((doc) => {
+          tokensUids.push(doc.id);
+        });
+      }
+      const deleteTokens = tokensUids.map((uid) => db.collection('token').doc(uid).delete());
+      await Promise.all(deleteTokens);
+      return { message: 'tokens in db deleted permanently', tokensDeleted: tokensUids.length };
+    } catch (error: unknown) {
+      return catchErrorHandler('deleteToken', error);
     }
   }
 }
