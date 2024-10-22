@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { adminInstance, auth, db } from '../db/firebase-service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthDTO } from '../models/auth.models';
@@ -24,8 +24,8 @@ export class AuthService {
         email,
         name,
         role: isAdmin ? 'admin' : 'client',
-        creationDate: moment().format('DD-MM-YYYY HH:mm:ss'),
-        lastConnection: moment().format('DD-MM-YYYY HH:mm:ss'),
+        creationDate: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss'),
+        lastConnection: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss'),
         tasksCreated: 0,
         tasksCompleted: 0,
         tasksDroped: 0,
@@ -63,7 +63,7 @@ export class AuthService {
       }
       const updatedUserData = {
         ...userData,
-        lastConnection: moment().format('DD-MM-YYYY HH:mm:ss')
+        lastConnection: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss')
       };
       await db.collection('users').doc(uid).set(updatedUserData);
       const payload = {
@@ -124,7 +124,7 @@ export class AuthService {
       await db
         .collection('users')
         .doc(uid)
-        .update({ isUserDisabled: moment().format('DD-MM-YYYY HH:mm:ss') });
+        .update({ isUserDisabled: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss') });
       return { message: 'user is now disabled' };
     } catch (error: unknown) {
       return catchErrorHandler('disableUser', error);
@@ -158,7 +158,7 @@ export class AuthService {
       await db
         .collection('users')
         .doc(uid)
-        .update({ isUserDeleted: moment().format('DD-MM-YYYY HH:mm:ss') });
+        .update({ isUserDeleted: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss') });
       return { message: 'user is now deleted' };
     } catch (error: unknown) {
       return catchErrorHandler('deleteUser', error);
@@ -188,7 +188,7 @@ export class AuthService {
 
   public static async deleteAdmin(): Promise<AuthDTO['deleteAdminResponseDTO']> {
     const usersUids: string[] = [];
-    const thirtyDaysAgo = moment().subtract(30, 'days').format('DD-MM-YYYY HH:mm:ss');
+    const thirtyDaysAgo = DateTime.now().minus({ days: 30 }).toFormat('dd-MM-yyyy HH:mm:ss');
     try {
       const snapshot = await db.collection('users').where('isUserDeleted', '<=', thirtyDaysAgo).get();
       if (!snapshot.empty) {

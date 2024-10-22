@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../db/firebase-service';
 import { authenticateUser } from '../middlewares/authenticate-user.middleware';
@@ -186,7 +186,7 @@ export class TokenMiddleware {
       }
       const updatedTokenData = {
         ...tokenData,
-        lastConnection: moment().format('DD-MM-YYYY HH:mm:ss')
+        lastConnection: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss')
       };
       await db.collection('token').doc(uid).set(updatedTokenData);
       const { iv, encryptedData } = EncryptationProcesses.encyptData({ uid, email });
@@ -205,8 +205,8 @@ export class TokenMiddleware {
         email,
         name,
         password: hashedPassword,
-        creationDate: moment().format('DD-MM-YYYY HH:mm:ss'),
-        lastConnection: moment().format('DD-MM-YYYY HH:mm:ss'),
+        creationDate: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss'),
+        lastConnection: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss'),
         isTokenDisabled: false
       };
       const tokenRef = await db.collection('token').add(tokenData);
@@ -222,7 +222,7 @@ export class TokenMiddleware {
       await db
         .collection('token')
         .doc(uid)
-        .update({ isTokenDisabled: moment().format('DD-MM-YYYY HH:mm:ss') });
+        .update({ isTokenDisabled: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss') });
       return { message: 'token is now disabled' };
     } catch (error: unknown) {
       return catchErrorHandler('disableTokenService', error);
@@ -240,7 +240,7 @@ export class TokenMiddleware {
 
   public async deleteToken(): Promise<TokenMiddlewareDTO['deleteTokenResponseDTO']> {
     const tokensUids: string[] = [];
-    const thirtyDaysAgo = moment().subtract(30, 'days').format('DD-MM-YYYY HH:mm:ss');
+    const thirtyDaysAgo = DateTime.now().minus({ days: 30 }).toFormat('dd-MM-yyyy HH:mm:ss');
     try {
       const snapshot = await db.collection('token').where('isTokenDisabled', '<=', thirtyDaysAgo).get();
       if (!snapshot.empty) {

@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { MainRoutes } from './src/index';
 import { TokenMiddleware } from './src/middlewares/token.middleware';
 import { EncryptDecryptBodyMiddleware } from './src/middlewares/encrypt-and-decrypt-body.middleware';
@@ -27,6 +28,7 @@ class App {
 
   private initializeMiddlewares(): void {
     this.app.use(logger());
+    this.app.use(cors());
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use(EncryptDecryptBodyMiddleware.encryptBody);
     this.app.use('/token', this.tokenMiddleware.router);
