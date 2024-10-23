@@ -1,0 +1,962 @@
+openapi: 3.0.3
+info:
+  title: to-do-app-be
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: http://localhost:3000
+  - url: http://localhost:3000/api
+paths:
+  /token/register-token:
+    post:
+      tags:
+        - token
+      summary: register-token
+      description: register-token
+      operationId: registerToken
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: mail@mail.com
+                name:
+                  type: string
+                  example: frantoken
+                password1:
+                  type: string
+                  example: Holi1234
+                password2:
+                  type: string
+                  example: Holi1234
+            examples:
+              register-token:
+                value:
+                  email: mail@mail.com
+                  name: frantoken
+                  password1: Holi1234
+                  password2: Holi1234
+      responses:
+        '201':
+          description: 201-register-token
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:19:00 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"3d-w7B9UuZ6krrVwstQv/GnBhXjSw0"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: token created
+                  tokenUid:
+                    type: string
+                    example: jiMvKIx1rLxxB0BHSBbk
+              examples:
+                201-register-token:
+                  value:
+                    message: token created
+                    tokenUid: jiMvKIx1rLxxB0BHSBbk
+        '409':
+          description: 409-register-token
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '52'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:29:10 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"34-j/M5umOuLX6z+LBTAb6lJ/Uh8EQ"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Token Already Registered.
+                  status:
+                    type: number
+                    example: 409
+              examples:
+                409-register-token:
+                  value:
+                    message: Token Already Registered.
+                    status: 409
+  /token/get-token:
+    post:
+      tags:
+        - token
+      summary: get-token
+      description: get-token
+      operationId: getToken
+      parameters:
+        - name: uid
+          in: header
+          schema:
+            type: string
+            example: xoSnQaHQOCsKcVHURuKE
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: mail@mail.com
+                password:
+                  type: string
+                  example: Holi1234
+            examples:
+              get-token:
+                value:
+                  email: mail@mail.com
+                  password: Holi1234
+      responses:
+        '201':
+          description: 201-get-token
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '329'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:15:19 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"149-k7ZcsYONw2Ubv2nlpbQdsT/3Hm4"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expiresIn:
+                    type: string
+                    example: 1 hour
+                  token:
+                    type: string
+                    example: >-
+                      XyAY965HFOeVVvmsQ5wM7A==:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidEFLSlcycDY2WGNyTzA0TENRSFcwaGU4elJLYVFHK3hUVWYxa1NoNnZueGs5TndkdnpiZ0NJZHo1bCs4a25HZHdWYS9EbDcwN0ZYZTQ4M0dKQmozanc9PSIsImlhdCI6MTcyODE4NDUxOSwiZXhwIjoxNzI4MTg4MTE5fQ.amn9gRpFJ6xBk75wMXX7V7BlNeBEmcTWdvDgTaMcNTk
+              examples:
+                201-get-token:
+                  value:
+                    expiresIn: 1 hour
+                    token: >-
+                      XyAY965HFOeVVvmsQ5wM7A==:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidEFLSlcycDY2WGNyTzA0TENRSFcwaGU4elJLYVFHK3hUVWYxa1NoNnZueGs5TndkdnpiZ0NJZHo1bCs4a25HZHdWYS9EbDcwN0ZYZTQ4M0dKQmozanc9PSIsImlhdCI6MTcyODE4NDUxOSwiZXhwIjoxNzI4MTg4MTE5fQ.amn9gRpFJ6xBk75wMXX7V7BlNeBEmcTWdvDgTaMcNTk
+  /token/disable:
+    patch:
+      tags:
+        - token
+      summary: disable-token
+      description: disable-token
+      operationId: disableToken
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: xoSnQaHQOCsKcVHURuKE
+            examples:
+              disable-token:
+                value:
+                  uid: xoSnQaHQOCsKcVHURuKE
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /token/enable:
+    patch:
+      tags:
+        - token
+      summary: enable-token
+      description: enable-token
+      operationId: enableToken
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: xoSnQaHQOCsKcVHURuKE
+            examples:
+              enable-token:
+                value:
+                  uid: xoSnQaHQOCsKcVHURuKE
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /token/delete:
+    delete:
+      tags:
+        - token
+      summary: delete-admin-token
+      description: delete-admin-token
+      operationId: deleteAdminToken
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /healtchecks/ping:
+    get:
+      tags:
+        - health-checks
+      summary: ping
+      description: ping
+      operationId: ping
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: 200-ping
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '18'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:32:02 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"12-6FyCUNJCdUkgXM8yXmM99u6fQw0"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: pong
+              examples:
+                200-ping:
+                  value:
+                    message: pong
+  /healtchecks/ping-send-email:
+    get:
+      tags:
+        - health-checks
+      summary: ping-send-email
+      description: ping-send-email
+      operationId: pingSendEmail
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: ''
+  /healtchecks/ping-db:
+    get:
+      tags:
+        - health-checks
+      summary: ping-db
+      description: ping-db
+      operationId: pingDb
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: 200-ping-db
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '21'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:32:35 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"15-KNG9oi4PMrcO0S6CPirf4Cv6B4c"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: pong-db
+              examples:
+                200-ping-db:
+                  value:
+                    message: pong-db
+  /healtchecks/ping-auth-admin:
+    get:
+      tags:
+        - health-checks
+      summary: ping-auth-admin
+      description: ping-auth-admin
+      operationId: pingAuthAdmin
+      parameters:
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: ''
+        '403':
+          description: 403-ping-auth-admin
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '70'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:33:27 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"46-+FWqTMlMzV5dy4u02oQ6go6uARU"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'authenticateUser: insufficient permissions.'
+                  status:
+                    type: number
+                    example: 403
+              examples:
+                403-ping-auth-admin:
+                  value:
+                    message: 'authenticateUser: insufficient permissions.'
+                    status: 403
+      security:
+        - bearerAuth: []
+  /healtchecks/ping-auth-client:
+    get:
+      tags:
+        - health-checks
+      summary: ping-auth-client
+      description: ping-auth-client
+      operationId: pingAuthClient
+      parameters:
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: 200-ping-auth-client
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '243'
+            Date:
+              schema:
+                type: string
+                example: Sun, 06 Oct 2024 03:34:05 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"f3-u1MihZqsiFh13JlaOy9he7hUe4Q"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userData:
+                    type: object
+                    properties:
+                      creationDate:
+                        type: string
+                        example: 26-07-2024 22:43:29
+                      email:
+                        type: string
+                        example: fran@third.com
+                      isUserDeleted:
+                        type: boolean
+                        example: false
+                      isUserDisabled:
+                        type: boolean
+                        example: false
+                      lastConnection:
+                        type: string
+                        example: 06-10-2024 00:16:24
+                      name:
+                        type: string
+                        example: third
+                      role:
+                        type: string
+                        example: client
+                      tasksCompleted:
+                        type: number
+                        example: 0
+                      tasksCreated:
+                        type: number
+                        example: 0
+                      tasksDroped:
+                        type: number
+                        example: 0
+              examples:
+                200-ping-auth-client:
+                  value:
+                    userData:
+                      creationDate: 26-07-2024 22:43:29
+                      email: fran@third.com
+                      isUserDeleted: false
+                      isUserDisabled: false
+                      lastConnection: 06-10-2024 00:16:24
+                      name: third
+                      role: client
+                      tasksCompleted: 0
+                      tasksCreated: 0
+                      tasksDroped: 0
+      security:
+        - bearerAuth: []
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: register
+      description: register
+      operationId: register
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fran@third.com
+                name:
+                  type: string
+                  example: holisoy
+                password1:
+                  type: string
+                  example: Password123
+                password2:
+                  type: string
+                  example: Password123
+            examples:
+              register:
+                value:
+                  email: fran@third.com
+                  name: holisoy
+                  password1: Password123
+                  password2: Password123
+      responses:
+        '200':
+          description: ''
+  /auth/register-admin:
+    post:
+      tags:
+        - auth
+      summary: register-admin
+      description: register-admin
+      operationId: registerAdmin
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fran@third.com
+                name:
+                  type: string
+                  example: holisoy
+                password1:
+                  type: string
+                  example: Password123
+                password2:
+                  type: string
+                  example: Password123
+            examples:
+              register-admin:
+                value:
+                  email: fran@third.com
+                  name: holisoy
+                  password1: Password123
+                  password2: Password123
+      responses:
+        '200':
+          description: ''
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: login
+      description: login
+      operationId: login
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fran@third.com
+                password:
+                  type: string
+                  example: Password123
+            examples:
+              login:
+                value:
+                  email: fran@third.com
+                  password: Password123
+      responses:
+        '200':
+          description: ''
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: logout
+      description: logout
+      operationId: logout
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /auth/change-password:
+    patch:
+      tags:
+        - auth
+      summary: change-password
+      description: change-password
+      operationId: changePassword
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password1:
+                  type: string
+                  example: ''
+                password2:
+                  type: string
+                  example: ''
+                token:
+                  type: string
+                  example: ''
+            examples:
+              change-password:
+                value:
+                  password1: ''
+                  password2: ''
+                  token: ''
+      responses:
+        '200':
+          description: ''
+  /auth/send-email-change-password:
+    patch:
+      tags:
+        - auth
+      summary: send-email-change-password
+      description: send-email-change-password
+      operationId: sendEmailChangePassword
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: mail@mail.com
+            examples:
+              send-email-change-password:
+                value:
+                  email: mail@mail.com
+      responses:
+        '200':
+          description: ''
+  /auth/disable:
+    patch:
+      tags:
+        - auth
+      summary: disable
+      description: disable
+      operationId: disable
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /auth/enable:
+    patch:
+      tags:
+        - auth
+      summary: enable
+      description: enable
+      operationId: enable
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /auth/delete:
+    patch:
+      tags:
+        - auth
+      summary: delete
+      description: delete
+      operationId: delete
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: rQlkWbUgmpYXxahDIEBKjQ0uAbA2
+            examples:
+              delete:
+                value:
+                  uid: rQlkWbUgmpYXxahDIEBKjQ0uAbA2
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /auth/restore:
+    patch:
+      tags:
+        - auth
+      summary: restore
+      description: restore
+      operationId: restore
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: rQlkWbUgmpYXxahDIEBKjQ0uAbA2
+            examples:
+              restore:
+                value:
+                  uid: rQlkWbUgmpYXxahDIEBKjQ0uAbA2
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearerAuth: []
+  /auth/delete-admin:
+    delete:
+      tags:
+        - auth
+      summary: delete-admin
+      description: delete-admin
+      operationId: deleteAdmin
+      parameters:
+        - name: authenticate-token
+          in: header
+          schema:
+            type: string
+            example: Bearer {{token}}
+        - name: iv
+          in: header
+          schema:
+            type: string
+            example: '{{ivLogin}}'
+      responses:
+        '200':
+          description: 200-delete-admin
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Sun, 13 Oct 2024 01:31:46 GMT
+            ETag:
+              schema:
+                type: string
+                example: W/"3e-MM/Qt3L3pqvSkyqJLJJPeecokAI"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: users in db deleted permanently
+                  usersDeleted:
+                    type: number
+                    example: 1
+              examples:
+                200-delete-admin:
+                  value:
+                    message: users in db deleted permanently
+                    usersDeleted: 1
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: token
+  - name: health-checks
+  - name: auth

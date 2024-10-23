@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { MainRoutes } from './src/index';
 import { TokenMiddleware } from './src/middlewares/token.middleware';
+import { Documentation } from './documentation/documentation.routes';
 import { EncryptDecryptBodyMiddleware } from './src/middlewares/encrypt-and-decrypt-body.middleware';
 import { errorHandler } from './src/middlewares/error-handler.middleware';
 import { logger } from './src/middlewares/logger.middleware';
@@ -14,16 +15,23 @@ class App {
   private PORT: string;
   private tokenMiddleware: TokenMiddleware;
   private mainRoutes: MainRoutes;
+  private documentation: Documentation;
 
   constructor() {
     this.app = express();
     this.PORT = Config.port;
     this.tokenMiddleware = new TokenMiddleware();
     this.mainRoutes = new MainRoutes();
+    this.documentation = new Documentation();
 
+    this.initializeSwagger();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
+  }
+
+  private initializeSwagger(): void {
+    this.app.use('/api-docs', this.documentation.router);
   }
 
   private initializeMiddlewares(): void {
