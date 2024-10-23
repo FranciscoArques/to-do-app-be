@@ -24,13 +24,13 @@ class App {
     this.mainRoutes = new MainRoutes();
     this.documentation = new Documentation();
 
-    this.initializeSwagger();
+    this.initializeDocumentation();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
   }
 
-  private initializeSwagger(): void {
+  private initializeDocumentation(): void {
     this.app.use('/api-docs', this.documentation.router);
   }
 

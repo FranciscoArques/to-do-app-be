@@ -23,10 +23,9 @@ export class EncryptDecryptBodyMiddleware {
   };
 
   public static decryptBody = <T>(req: Request, res: Response, next: NextFunction) => {
-    const encryptedData = req.body?.data || '';
-    const iv = req.header('decrypt-body-iv') || '';
-
     if (Object.keys(req.body).length) {
+      const encryptedData = req.body.data || '';
+      const iv = req.header('decrypt-body-iv') || '';
       try {
         const decryptedData = EncryptationProcesses.decryptData(iv, encryptedData);
         req.body = decryptedData as T;

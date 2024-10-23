@@ -32,6 +32,7 @@ interface Operation {
 interface PathItem {
   get?: Operation;
   post?: Operation;
+  patch?: Operation;
   put?: Operation;
   delete?: Operation;
 }

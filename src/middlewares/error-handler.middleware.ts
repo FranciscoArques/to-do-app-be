@@ -11,8 +11,5 @@ export const errorHandler = (err: HttpError, req: Request, res: Response, next: 
   const status = err.status || 500;
   const message = err.message || 'Internal Server Error';
 
-  res.status(status).json({
-    status,
-    message
-  });
+  res.status(status).json({ status, message });
 };
