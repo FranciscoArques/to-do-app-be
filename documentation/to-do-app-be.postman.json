@@ -40,9 +40,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/token/register-token",
+							"raw": "{{baseUrlToken}}/token/register-token",
 							"host": [
-								"{{baseUrl}}"
+								"{{baseUrlToken}}"
 							],
 							"path": [
 								"token",
@@ -82,9 +82,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/token/register-token",
+									"raw": "{{baseUrlToken}}/token/register-token",
 									"host": [
-										"{{baseUrl}}"
+										"{{baseUrlToken}}"
 									],
 									"path": [
 										"token",
@@ -159,9 +159,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/token/register-token",
+									"raw": "{{baseUrlToken}}/token/register-token",
 									"host": [
-										"{{baseUrl}}"
+										"{{baseUrlToken}}"
 									],
 									"path": [
 										"token",
@@ -257,9 +257,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/token/get-token",
+							"raw": "{{baseUrlToken}}/token/get-token",
 							"host": [
-								"{{baseUrl}}"
+								"{{baseUrlToken}}"
 							],
 							"path": [
 								"token",
@@ -295,9 +295,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/token/get-token",
+									"raw": "{{baseUrlToken}}/token/get-token",
 									"host": [
-										"{{baseUrl}}"
+										"{{baseUrlToken}}"
 									],
 									"path": [
 										"token",
@@ -342,6 +342,195 @@
 							"body": "{\n    \"token\": \"XyAY965HFOeVVvmsQ5wM7A==:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidEFLSlcycDY2WGNyTzA0TENRSFcwaGU4elJLYVFHK3hUVWYxa1NoNnZueGs5TndkdnpiZ0NJZHo1bCs4a25HZHdWYS9EbDcwN0ZYZTQ4M0dKQmozanc9PSIsImlhdCI6MTcyODE4NDUxOSwiZXhwIjoxNzI4MTg4MTE5fQ.amn9gRpFJ6xBk75wMXX7V7BlNeBEmcTWdvDgTaMcNTk\",\n    \"expiresIn\": \"1 hour\"\n}"
 						}
 					]
+				},
+				{
+					"name": "disable-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  if (responseJson && responseJson.token) {\r",
+									"    pm.collectionVariables.set(\"token\", responseJson.token);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"token\");\r",
+									"    console.error(\"Error: token not found in response JSON\");\r",
+									"  }\r",
+									"} catch (e) {\r",
+									"  pm.collectionVariables.unset(\"token\");\r",
+									"  console.error(\"Error parsing response: \", e);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uid\": \"xoSnQaHQOCsKcVHURuKE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlToken}}/token/disable",
+							"host": [
+								"{{baseUrlToken}}"
+							],
+							"path": [
+								"token",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enable-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  if (responseJson && responseJson.token) {\r",
+									"    pm.collectionVariables.set(\"token\", responseJson.token);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"token\");\r",
+									"    console.error(\"Error: token not found in response JSON\");\r",
+									"  }\r",
+									"} catch (e) {\r",
+									"  pm.collectionVariables.unset(\"token\");\r",
+									"  console.error(\"Error parsing response: \", e);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uid\": \"xoSnQaHQOCsKcVHURuKE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlToken}}/token/enable",
+							"host": [
+								"{{baseUrlToken}}"
+							],
+							"path": [
+								"token",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-admin-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  if (responseJson && responseJson.token) {\r",
+									"    pm.collectionVariables.set(\"token\", responseJson.token);\r",
+									"  } else {\r",
+									"    pm.collectionVariables.unset(\"token\");\r",
+									"    console.error(\"Error: token not found in response JSON\");\r",
+									"  }\r",
+									"} catch (e) {\r",
+									"  pm.collectionVariables.unset(\"token\");\r",
+									"  console.error(\"Error parsing response: \", e);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrlToken}}/token/delete",
+							"host": [
+								"{{baseUrlToken}}"
+							],
+							"path": [
+								"token",
+								"delete"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -430,6 +619,30 @@
 							"body": "{\n    \"message\": \"pong\"\n}"
 						}
 					]
+				},
+				{
+					"name": "ping-send-email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/healtchecks/ping-send-email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"healtchecks",
+								"ping-send-email"
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "ping-db",
@@ -729,10 +942,16 @@
 					"name": "register",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"third\",\r\n    \"email\": \"fran@third.com\",\r\n    \"password1\": \"Password123\",\r\n    \"password2\": \"Password123\"\r\n}",
+							"raw": "{\r\n    \"name\": \"holisoy\",\r\n    \"email\": \"fran@third.com\",\r\n    \"password1\": \"Password123\",\r\n    \"password2\": \"Password123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -747,6 +966,39 @@
 							"path": [
 								"auth",
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register-admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"holisoy\",\r\n    \"email\": \"fran@third.com\",\r\n    \"password1\": \"Password123\",\r\n    \"password2\": \"Password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register-admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register-admin"
 							]
 						}
 					},
@@ -814,35 +1066,380 @@
 							]
 						}
 					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change-password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"\",\r\n    \"password1\": \"\",\r\n    \"password2\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/change-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send-email-change-password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mail@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/send-email-change-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"send-email-change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disable",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/disable",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enable",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/enable",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uid\": \"rQlkWbUgmpYXxahDIEBKjQ0uAbA2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/delete",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uid\": \"rQlkWbUgmpYXxahDIEBKjQ0uAbA2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/restore",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{userTokenLogin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authenticate-token",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "iv",
+								"value": "{{ivLogin}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/delete-admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"delete-admin"
+							]
+						}
+					},
 					"response": [
 						{
-							"name": "200-login",
+							"name": "200-delete-admin",
 							"originalRequest": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "authenticate-token",
 										"value": "Bearer {{token}}",
 										"type": "text"
+									},
+									{
+										"key": "iv",
+										"value": "{{ivLogin}}",
+										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"fran@third.com\",\r\n    \"password\": \"Password123\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{baseUrl}}/auth/login",
+									"raw": "{{baseUrl}}/auth/delete-admin",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"auth",
-										"login"
+										"delete-admin"
 									]
 								}
 							},
@@ -855,24 +1452,20 @@
 									"value": "Express"
 								},
 								{
-									"key": "iv",
-									"value": "4H35b2WxUzr60ki3S5yhcQ=="
-								},
-								{
 									"key": "Content-Type",
 									"value": "application/json; charset=utf-8"
 								},
 								{
 									"key": "Content-Length",
-									"value": "340"
+									"value": "62"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"154-/8Cwj3Rp3+BVKSah0/UUA7AcW7k\""
+									"value": "W/\"3e-MM/Qt3L3pqvSkyqJLJJPeecokAI\""
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 06 Oct 2024 03:34:23 GMT"
+									"value": "Sun, 13 Oct 2024 01:31:46 GMT"
 								},
 								{
 									"key": "Connection",
@@ -884,7 +1477,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"userToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmNyeXB0ZWREYXRhIjoidXJyYTNHUG9rSjhlVVBvS0w2UEpiRlN4UUtkbTd5OUdJeng0eFlyei8weG1hdHQ5Z012ZXZydVlaZUZoUHE3Q1lGRDlDeGJORlVEcXF5UGdvNE8vdHdCMXdJSSt5QVpYUmUxeEc2RmxNQllRZUdxd2orVEVVUTI3NDVxS0hLdGciLCJpYXQiOjE3MjgxODU2NjMsImV4cCI6MTcyODE5NjQ2M30.QvMu8E3tisO6JshtAAOT4RjlriuN3e0mgumPxYiNwP4\"\n}"
+							"body": "{\n    \"message\": \"users in db deleted permanently\",\n    \"usersDeleted\": 1\n}"
 						}
 					]
 				}
@@ -920,8 +1513,9 @@
 			"type": "string"
 		},
 		{
-			"key": "token",
-			"value": ""
+			"key": "baseUrlToken",
+			"value": "http://localhost:3000",
+			"type": "string"
 		},
 		{
 			"key": "userTokenLogin",
@@ -929,6 +1523,10 @@
 		},
 		{
 			"key": "ivLogin",
+			"value": ""
+		},
+		{
+			"key": "token",
 			"value": ""
 		}
 	]

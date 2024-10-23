@@ -10,7 +10,7 @@ export class EncryptDecryptBodyMiddleware {
       if (body) {
         try {
           const { iv, encryptedData } = EncryptationProcesses.encyptData(body);
-          res.setHeader('iv', iv);
+          res.setHeader('decrypt-body-iv', iv);
           return originalJson.apply(res, [{ data: encryptedData }]);
         } catch (error) {
           next(catchErrorHandlerController(error));
@@ -18,6 +18,22 @@ export class EncryptDecryptBodyMiddleware {
       }
       return originalJson.apply(res, [body]);
     };
+
+    next();
+  };
+
+  public static decryptBody = <T>(req: Request, res: Response, next: NextFunction) => {
+    const encryptedData = req.body?.data || '';
+    const iv = req.header('decrypt-body-iv') || '';
+
+    if (encryptedData) {
+      try {
+        const decryptedData = EncryptationProcesses.decryptData(iv, encryptedData);
+        req.body = decryptedData as T;
+      } catch (error) {
+        next(catchErrorHandlerController(error));
+      }
+    }
 
     next();
   };

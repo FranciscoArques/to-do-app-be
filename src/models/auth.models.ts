@@ -1,6 +1,7 @@
 export interface AuthDTO {
   createUserResponse: CreateUserResponseDTO;
   loginUserResponseDTO: LoginUserResponseDTO;
+  logoutUserResponseDTO: LogoutUserResponseDTO;
   disableUserResponseDTO: DisableUserResponseDTO;
   deleteUserResponseDTO: DeleteUserResponseDTO;
   enabledUserResponseDTO: EnabledUserResponseDTO;
@@ -17,6 +18,10 @@ type CreateUserResponseDTO = {
 type LoginUserResponseDTO = {
   iv: string;
   userToken: string;
+};
+
+type LogoutUserResponseDTO = {
+  message: 'successfully loged out';
 };
 
 type EmailChangePasswordResponseDTO = {

@@ -8,6 +8,7 @@ import { HttpError } from '../utils/errors/http-error';
 import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
 import { Config } from '../utils/secrets/envs-manager';
 import { EncryptationProcesses } from '../utils/secrets/encryptation-processes';
+import { UserSession } from '../middlewares/authenticate-user.middleware';
 
 export class AuthService {
   public static async createUser(name: string, email: string, password: string, isAdmin: boolean = false): Promise<AuthDTO['createUserResponse']> {
@@ -30,7 +31,8 @@ export class AuthService {
         tasksCompleted: 0,
         tasksDroped: 0,
         isUserDisabled: false,
-        isUserDeleted: false
+        isUserDeleted: false,
+        hasLogedOut: true
       };
       await db.collection('users').doc(userRecord.uid).set(userData);
       const { acceptedEmail } = await sendEmailInstances('register-user', email);
@@ -63,6 +65,7 @@ export class AuthService {
       }
       const updatedUserData = {
         ...userData,
+        hasLogedOut: false,
         lastConnection: DateTime.now().toFormat('dd-MM-yyyy HH:mm:ss')
       };
       await db.collection('users').doc(uid).set(updatedUserData);
@@ -80,6 +83,16 @@ export class AuthService {
       return { iv, userToken };
     } catch (error: unknown) {
       return catchErrorHandler('loginUser', error);
+    }
+  }
+
+  public static async logoutUser(userSession: UserSession): Promise<AuthDTO['logoutUserResponseDTO']> {
+    try {
+      await db.collection('users').doc(userSession.uid).set({ hasLogedOut: true }, { merge: true });
+      await adminInstance.auth().revokeRefreshTokens(userSession.uid);
+      return { message: 'successfully loged out' };
+    } catch (error) {
+      return catchErrorHandler('logoutUser', error);
     }
   }
 

@@ -17,6 +17,7 @@ export class AuthRoutes {
     this.router.post('/register', this.createUserController.bind(this));
     this.router.post('/register-admin', authenticateUser(true), this.createAdminController.bind(this));
     this.router.post('/login', this.loginUserController.bind(this));
+    this.router.post('/logout', authenticateUser(), this.logoutUserController.bind(this));
     this.router.patch('/send-email-change-password', this.emailChangePasswordUserController.bind(this));
     this.router.patch('/change-password', this.changePasswordUserController.bind(this));
     this.router.patch('/disable', authenticateUser(), this.disableUserController.bind(this));
@@ -88,6 +89,22 @@ export class AuthRoutes {
       }
       res.setHeader('iv', iv);
       return res.status(200).json({ userToken });
+    } catch (error) {
+      return next(catchErrorHandlerController(error));
+    }
+  }
+
+  private async logoutUserController(req: Request, res: Response, next: NextFunction) {
+    const { userSession } = req;
+    if (!userSession) {
+      return next(new HttpError(401, 'No User Data on Session for Client.'));
+    }
+    try {
+      const { message } = await AuthService.logoutUser(userSession);
+      if (!message) {
+        return next(new HttpError(404, 'Bad Request.'));
+      }
+      return res.status(200).json({ message });
     } catch (error) {
       return next(catchErrorHandlerController(error));
     }

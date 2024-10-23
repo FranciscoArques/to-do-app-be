@@ -13,7 +13,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-type UserSession = {
+export type UserSession = {
   uid: string;
   email: string;
   name: string;
@@ -25,6 +25,7 @@ type UserSession = {
   tasksDroped: number;
   isUserDisabled: boolean;
   isUserDeleted: boolean;
+  hasLogedOut: boolean;
 };
 
 export const authenticateUser = (isClientNotAllowed: boolean = false) => {
@@ -46,7 +47,10 @@ export const authenticateUser = (isClientNotAllowed: boolean = false) => {
         throw new HttpError(404, 'authenticateUser: user not found.');
       }
       if (userData.email !== email || userData.isUserDisabled || userData.isUserDeleted) {
-        throw new HttpError(403, 'authenticateUser: insufficient permissions.');
+        throw new HttpError(403, 'authenticateUser: user banned.');
+      }
+      if (userData.hasLogedOut) {
+        throw new HttpError(409, 'authenticateUser: user has loged out.');
       }
       if (isClientNotAllowed && role === 'client') {
         throw new HttpError(403, 'authenticateUser: insufficient permissions.');
