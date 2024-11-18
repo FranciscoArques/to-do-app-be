@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { MainRoutes } from './src/index';
 import { TokenMiddleware } from './src/middlewares/token.middleware';
-import { Documentation } from './documentation/documentation.routes';
+import { Documentation } from './src/middlewares/documentation.middleware';
 import { EncryptDecryptBodyMiddleware } from './src/middlewares/encrypt-and-decrypt-body.middleware';
 import { errorHandler } from './src/middlewares/error-handler.middleware';
 import { logger } from './src/middlewares/logger.middleware';

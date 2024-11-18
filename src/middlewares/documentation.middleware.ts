@@ -61,7 +61,7 @@ export class Documentation {
   }
 
   private loadSwaggerDocument(): SwaggerDocument {
-    const filePath = path.join(__dirname, './to-do-app-be.swagger.yaml');
+    const filePath = path.join(__dirname, '../../documentation/to-do-app-be.swagger.yaml');
     const fileContent = fs.readFileSync(filePath, 'utf8');
     return yaml.load(fileContent) as SwaggerDocument;
   }
