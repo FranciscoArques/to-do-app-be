@@ -12,8 +12,8 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint --config config/.eslintrc.json",
-      "prettier --config .prettierrc --write"
+      "prettier --config .prettierrc --write",
+      "eslint --config config/.eslintrc.json"
     ]
   },
   "author": "fran_arques",

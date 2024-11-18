@@ -4,11 +4,11 @@ import { catchErrorHandler } from '../utils/errors/catch-error-handlers';
 import { HttpError } from '../utils/errors/http-error';
 
 export class FriendsService {
-  public static async searchUser(userVisibleId?: string, userName?: string): Promise<FriendsDTO['filteredUsersDTO']> {
-    const query = userVisibleId
-      ? db.collection('users').where('visibleId', '==', userVisibleId)
-      : userName
-        ? db.collection('users').where('name', '==', userName)
+  public static async searchUser(filter: { userVisibleId?: string; userName?: string }): Promise<FriendsDTO['filteredUsersDTO']> {
+    const query = filter.userVisibleId
+      ? db.collection('users').where('visibleId', '==', filter.userVisibleId)
+      : filter.userName
+        ? db.collection('users').where('name', '==', filter.userName)
         : null;
     if (!query) {
       throw new HttpError(404, 'searchUser: missing filters.');

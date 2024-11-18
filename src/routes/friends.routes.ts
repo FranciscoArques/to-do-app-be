@@ -21,9 +21,10 @@ export class FriendsRoutes {
       if (!userVisibleId && !userName) {
         throw new HttpError(400, 'Missing Querys.');
       }
-      const { users } = await FriendsService.searchUser(
-        userVisibleId ? (userVisibleId as string).toLowerCase().trim() : (userName as string).toLowerCase().trim()
-      );
+      const filter = userVisibleId
+        ? { userVisibleId: (userVisibleId as string).toLowerCase().trim() }
+        : { userName: (userName as string).toLowerCase().trim() };
+      const { users } = await FriendsService.searchUser(filter);
       if (!users.length) {
         return next(new HttpError(404, 'User Not Found.'));
       }

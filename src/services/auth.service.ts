@@ -22,7 +22,7 @@ export class AuthService {
         throw new HttpError(404, 'createUser: failed firebase method createUser().');
       }
       const userData = {
-        visibleId: userRecord.uid.slice(-6).toLocaleLowerCase(),
+        visibleId: userRecord.uid.slice(-6).toUpperCase(),
         email,
         name,
         role: isAdmin ? 'admin' : 'client',
